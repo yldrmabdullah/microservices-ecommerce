@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y maven
 RUN mvn clean package -DskipTests -f services/order-service/pom.xml
 
 # Copy the built JAR to the working directory
-RUN cp services/order-service/target/*.jar app.jar
+RUN cp services/order-service/target/order-service-0.0.1-SNAPSHOT.jar app.jar
 
 # Run the application
 EXPOSE 8082
