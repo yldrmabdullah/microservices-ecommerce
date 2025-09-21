@@ -21,12 +21,13 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    @Cacheable(value = "products", key = "'all'")
+    @Cacheable(value = "products", key = "'all'", unless = "#result.isEmpty()")
     public List<Product> getAllProducts() {
-        log.info("Fetching all products");
+        log.info("Fetching all products from database");
         return productRepository.findAll();
     }
 
+    @Cacheable(value = "products", key = "'search_' + #query", unless = "#result.isEmpty()")
     public List<Product> searchProducts(String query) {
         log.info("Searching products with query: {}", query);
         if (query == null || query.trim().isEmpty()) {
@@ -35,15 +36,16 @@ public class ProductService {
         return productRepository.findByNameContainingIgnoreCase(query.trim());
     }
 
-    @Cacheable(value = "products", key = "#id")
+    @Cacheable(value = "products", key = "#id", unless = "#result == null")
     public Product getProductById(Long id) {
-        log.info("Fetching product with id: {}", id);
+        log.info("Fetching product with id: {} from database", id);
         return productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
+    @Cacheable(value = "products", key = "'sku_' + #sku", unless = "#result == null")
     public Product getProductBySku(String sku) {
-        log.info("Fetching product with sku: {}", sku);
+        log.info("Fetching product with sku: {} from database", sku);
         return productRepository.findBySku(sku)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found with SKU: " + sku));
     }
@@ -140,13 +142,15 @@ public class ProductService {
         return product.hasEnoughStock(quantity);
     }
 
+    @Cacheable(value = "products", key = "'category_' + #category", unless = "#result.isEmpty()")
     public List<Product> getProductsByCategory(String category) {
-        log.info("Fetching products by category: {}", category);
+        log.info("Fetching products by category: {} from database", category);
         return productRepository.findByCategoryIgnoreCase(category);
     }
 
+    @Cacheable(value = "products", key = "'low_stock_' + #threshold", unless = "#result.isEmpty()")
     public List<Product> getLowStockProducts(int threshold) {
-        log.info("Fetching products with stock below threshold: {}", threshold);
+        log.info("Fetching products with stock below threshold: {} from database", threshold);
         return productRepository.findByStockLessThan(threshold);
     }
 

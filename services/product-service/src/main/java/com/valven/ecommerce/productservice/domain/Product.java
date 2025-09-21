@@ -10,7 +10,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "products")
+@Table(name = "products", indexes = {
+    @Index(name = "idx_product_sku", columnList = "sku"),
+    @Index(name = "idx_product_category", columnList = "category"),
+    @Index(name = "idx_product_stock", columnList = "stock"),
+    @Index(name = "idx_product_price", columnList = "price"),
+    @Index(name = "idx_product_created_at", columnList = "created_at")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

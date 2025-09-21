@@ -3,8 +3,10 @@ package com.valven.ecommerce.orderservice.web;
 import com.valven.ecommerce.orderservice.domain.Cart;
 import com.valven.ecommerce.orderservice.domain.CartItem;
 import com.valven.ecommerce.orderservice.domain.Order;
+import com.valven.ecommerce.orderservice.dto.ApiResponse;
 import com.valven.ecommerce.orderservice.repository.CartRepository;
 import com.valven.ecommerce.orderservice.repository.OrderRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,32 +24,42 @@ public class CartOrderController {
     private final OrderRepository orderRepository;
 
     @PostMapping("/carts/items")
-    public ResponseEntity<Cart> addItem(@RequestBody CartItem item, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Cart>> addItem(@Valid @RequestBody CartItem item, HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
         if (userId == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error("User ID not found in request", "MISSING_USER_ID"));
         }
-        Cart cart = cartRepository.findByUserId(userId).orElseGet(() -> {
-            Cart c = new Cart();
-            c.setUserId(userId);
-            return c;
-        });
         
-        boolean itemExists = false;
-        for (CartItem existingItem : cart.getItems()) {
-            if (existingItem.getProductId().equals(item.getProductId())) {
-                existingItem.setQuantity(existingItem.getQuantity() + item.getQuantity());
-                itemExists = true;
-                break;
+        try {
+            Cart cart = cartRepository.findByUserId(userId).orElseGet(() -> {
+                Cart c = new Cart();
+                c.setUserId(userId);
+                return c;
+            });
+            
+            boolean itemExists = false;
+            for (CartItem existingItem : cart.getItems()) {
+                if (existingItem.getProductId().equals(item.getProductId())) {
+                    existingItem.setQuantity(existingItem.getQuantity() + item.getQuantity());
+                    itemExists = true;
+                    break;
+                }
             }
+            
+            if (!itemExists) {
+                cart.getItems().add(item);
+            }
+            
+            Cart saved = cartRepository.save(cart);
+            log.info("Item added to cart for user: {}, product: {}, quantity: {}", 
+                    userId, item.getProductId(), item.getQuantity());
+            return ResponseEntity.ok(ApiResponse.success("Item added to cart successfully", saved));
+        } catch (Exception e) {
+            log.error("Error adding item to cart: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.error("Failed to add item to cart: " + e.getMessage(), "CART_ADD_ERROR"));
         }
-        
-        if (!itemExists) {
-            cart.getItems().add(item);
-        }
-        
-        Cart saved = cartRepository.save(cart);
-        return ResponseEntity.ok(saved);
     }
 
     @GetMapping("/carts")
