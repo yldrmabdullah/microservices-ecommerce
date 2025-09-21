@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -27,13 +28,14 @@ public class CartOrderController {
 
     @PostMapping("/carts/items")
     public ResponseEntity<ApiResponse<Cart>> addItem(@Valid @RequestBody CartItem item, HttpServletRequest request) {
-        String userId = (String) request.getAttribute("userId");
-        if (userId == null) {
+        String userIdStr = (String) request.getAttribute("userId");
+        if (userIdStr == null) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.<Cart>error("User ID not found in request", "MISSING_USER_ID"));
         }
         
         try {
+            UUID userId = UUID.fromString(userIdStr);
             Cart cart = cartRepository.findByUserId(userId).orElseGet(() -> {
                 Cart c = new Cart();
                 c.setUserId(userId);
@@ -55,7 +57,7 @@ public class CartOrderController {
             
             Cart saved = cartRepository.save(cart);
             log.info("Item added to cart for user: {}, product: {}, quantity: {}", 
-                    userId, item.getProductId(), item.getQuantity());
+                    userIdStr, item.getProductId(), item.getQuantity());
             return ResponseEntity.ok(ApiResponse.<Cart>success("Item added to cart successfully", saved));
         } catch (Exception e) {
             log.error("Error adding item to cart: {}", e.getMessage(), e);
@@ -66,60 +68,85 @@ public class CartOrderController {
 
     @GetMapping("/carts")
     public ResponseEntity<Cart> getCart(HttpServletRequest request) {
-        String userId = (String) request.getAttribute("userId");
-        if (userId == null) {
+        String userIdStr = (String) request.getAttribute("userId");
+        if (userIdStr == null) {
             return ResponseEntity.badRequest().build();
         }
-        return cartRepository.findByUserId(userId).map(ResponseEntity::ok).orElse(ResponseEntity.ok(new Cart()));
+        try {
+            UUID userId = UUID.fromString(userIdStr);
+            return cartRepository.findByUserId(userId).map(ResponseEntity::ok).orElse(ResponseEntity.ok(new Cart()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/carts/items/{productId}")
     public ResponseEntity<Cart> removeItem(@PathVariable("productId") Long productId, HttpServletRequest request) {
-        String userId = (String) request.getAttribute("userId");
-        if (userId == null) {
+        String userIdStr = (String) request.getAttribute("userId");
+        if (userIdStr == null) {
             return ResponseEntity.badRequest().build();
         }
-        Cart cart = cartRepository.findByUserId(userId).orElse(null);
-        if (cart != null) {
-            cart.getItems().removeIf(item -> item.getProductId().equals(productId));
-            cart = cartRepository.save(cart);
+        try {
+            UUID userId = UUID.fromString(userIdStr);
+            Cart cart = cartRepository.findByUserId(userId).orElse(null);
+            if (cart != null) {
+                cart.getItems().removeIf(item -> item.getProductId().equals(productId));
+                cart = cartRepository.save(cart);
+            }
+            return ResponseEntity.ok(cart != null ? cart : new Cart());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(cart != null ? cart : new Cart());
     }
 
     @DeleteMapping("/carts")
     public ResponseEntity<Cart> clearCart(HttpServletRequest request) {
-        String userId = (String) request.getAttribute("userId");
-        if (userId == null) {
+        String userIdStr = (String) request.getAttribute("userId");
+        if (userIdStr == null) {
             return ResponseEntity.badRequest().build();
         }
-        Cart cart = cartRepository.findByUserId(userId).orElse(null);
-        if (cart != null) {
-            cart.getItems().clear();
-            cart = cartRepository.save(cart);
+        try {
+            UUID userId = UUID.fromString(userIdStr);
+            Cart cart = cartRepository.findByUserId(userId).orElse(null);
+            if (cart != null) {
+                cart.getItems().clear();
+                cart = cartRepository.save(cart);
+            }
+            return ResponseEntity.ok(cart != null ? cart : new Cart());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(cart != null ? cart : new Cart());
     }
 
     @PostMapping("/orders")
     public ResponseEntity<Order> createOrder(@RequestBody Order order, HttpServletRequest request) {
-        String userId = (String) request.getAttribute("userId");
-        if (userId == null) {
+        String userIdStr = (String) request.getAttribute("userId");
+        if (userIdStr == null) {
             return ResponseEntity.badRequest().build();
         }
-        order.setUserId(userId);
-        Order saved = orderRepository.save(order);
-        return ResponseEntity.created(URI.create("/api/orders/" + saved.getId())).body(saved);
+        try {
+            UUID userId = UUID.fromString(userIdStr);
+            order.setUserId(userId);
+            Order saved = orderRepository.save(order);
+            return ResponseEntity.created(URI.create("/api/orders/" + saved.getId())).body(saved);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/orders")
     public ResponseEntity<java.util.List<Order>> getAllOrders(HttpServletRequest request) {
-        String userId = (String) request.getAttribute("userId");
-        if (userId == null) {
+        String userIdStr = (String) request.getAttribute("userId");
+        if (userIdStr == null) {
             return ResponseEntity.badRequest().build();
         }
-        java.util.List<Order> orders = orderRepository.findByUserId(userId);
-        return ResponseEntity.ok(orders);
+        try {
+            UUID userId = UUID.fromString(userIdStr);
+            java.util.List<Order> orders = orderRepository.findByUserId(userId);
+            return ResponseEntity.ok(orders);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
 

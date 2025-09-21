@@ -116,13 +116,23 @@ jobs:
           SPRING_REDIS_HOST: localhost
           SPRING_REDIS_PORT: 6379
 
+      - name: Check for Test Reports
+        id: check-test-reports
+        run: |
+          if [ -d "target/surefire-reports" ] && [ "$(find target/surefire-reports -name "*.xml" | wc -l)" -gt 0 ]; then
+            echo "test-reports-exist=true" >> $GITHUB_OUTPUT
+          else
+            echo "test-reports-exist=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Generate Test Report
         uses: dorny/test-reporter@v1
-        if: success() || failure()
+        if: steps.check-test-reports.outputs.test-reports-exist == 'true'
         with:
           name: Maven Tests
           path: target/surefire-reports/*.xml
           reporter: java-junit
+          fail-on-error: false
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
@@ -267,7 +277,7 @@ jobs:
         with:
           status: ${{ job.status }}
           channel: '#deployments'
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: always()
 
   # Security Scan

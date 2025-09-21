@@ -229,7 +229,7 @@ jobs:
         with:
           status: ${{ job.status }}
           channel: '#security'
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
           fields: repo,message,commit,author,action,eventName,ref,workflow
         if: failure()
 
