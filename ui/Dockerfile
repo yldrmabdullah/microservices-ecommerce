@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y maven
 RUN mvn clean package -DskipTests -f ui/pom.xml
 
 # Copy the built JAR to the working directory
-RUN cp ui/target/*.jar app.jar
+RUN cp ui/target/ui-0.0.1-SNAPSHOT.jar app.jar
 
 # Run the application
 EXPOSE 8085
