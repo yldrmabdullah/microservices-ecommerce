@@ -4,10 +4,6 @@ import com.valven.ecommerce.userservice.dto.*;
 import com.valven.ecommerce.userservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -32,12 +28,6 @@ public class AuthController {
     }
 
     @Operation(summary = "Register a new user", description = "Creates a new user account and returns authentication token")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User registered successfully",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input or user already exists",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-    })
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<AuthResponse>> signup(
             @Parameter(description = "User registration details", required = true)
@@ -46,21 +36,15 @@ public class AuthController {
             log.info("Signup request received for email: {}", request.getEmail());
             AuthResponse response = userService.signup(request);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(ApiResponse.<AuthResponse>success("User registered successfully", response));
+                    .body(com.valven.ecommerce.userservice.dto.ApiResponse.<AuthResponse>success("User registered successfully", response));
         } catch (Exception e) {
             log.error("Signup failed for email {}: {}", request.getEmail(), e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.<AuthResponse>error(e.getMessage()));
+                    .body(com.valven.ecommerce.userservice.dto.ApiResponse.<AuthResponse>error(e.getMessage()));
         }
     }
 
     @Operation(summary = "Authenticate user", description = "Authenticates user credentials and returns JWT token")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Login successful",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid credentials",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-    })
     @PostMapping("/signin")
     public ResponseEntity<ApiResponse<AuthResponse>> signin(
             @Parameter(description = "User login credentials", required = true)
@@ -68,21 +52,15 @@ public class AuthController {
         try {
             log.info("Signin request received for email: {}", request.getEmail());
             AuthResponse response = userService.signin(request);
-            return ResponseEntity.ok(ApiResponse.<AuthResponse>success("Login successful", response));
+            return ResponseEntity.ok(com.valven.ecommerce.userservice.dto.ApiResponse.<AuthResponse>success("Login successful", response));
         } catch (Exception e) {
             log.error("Signin failed for email {}: {}", request.getEmail(), e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.<AuthResponse>error(e.getMessage()));
+                    .body(com.valven.ecommerce.userservice.dto.ApiResponse.<AuthResponse>error(e.getMessage()));
         }
     }
 
     @Operation(summary = "Validate JWT token", description = "Validates the provided JWT token")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Token validation completed",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid token",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-    })
     @GetMapping("/validate")
     public ResponseEntity<ApiResponse<Boolean>> validateToken(
             @Parameter(description = "JWT token in Authorization header", required = true)
@@ -93,21 +71,15 @@ public class AuthController {
             }
             
             boolean isValid = userService.validateToken(token);
-            return ResponseEntity.ok(ApiResponse.<Boolean>success("Token validation completed", isValid));
+            return ResponseEntity.ok(com.valven.ecommerce.userservice.dto.ApiResponse.<Boolean>success("Token validation completed", isValid));
         } catch (Exception e) {
             log.error("Token validation failed: {}", e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.<Boolean>error("Invalid token"));
+                    .body(com.valven.ecommerce.userservice.dto.ApiResponse.<Boolean>error("Invalid token"));
         }
     }
 
     @Operation(summary = "Get user information", description = "Retrieves user information from JWT token")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User information retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid token or user not found",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-    })
     @GetMapping("/user")
     public ResponseEntity<ApiResponse<UserResponse>> getUserInfo(
             @Parameter(description = "JWT token in Authorization header", required = true)
@@ -119,11 +91,11 @@ public class AuthController {
             
             UUID userId = userService.getUserIdFromToken(token);
             UserResponse user = userService.getUserById(userId);
-            return ResponseEntity.ok(ApiResponse.<UserResponse>success("User information retrieved", user));
+            return ResponseEntity.ok(com.valven.ecommerce.userservice.dto.ApiResponse.<UserResponse>success("User information retrieved", user));
         } catch (Exception e) {
             log.error("Failed to get user info: {}", e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.<UserResponse>error("Failed to retrieve user information"));
+                    .body(com.valven.ecommerce.userservice.dto.ApiResponse.<UserResponse>error("Failed to retrieve user information"));
         }
     }
 }

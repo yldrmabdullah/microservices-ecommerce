@@ -235,13 +235,13 @@ class ProductServiceTest {
     void getProductsByCategory_ShouldReturnProductsInCategory() {
         
         List<Product> products = Arrays.asList(testProduct);
-        when(productRepository.findByCategory(anyString())).thenReturn(products);
+        when(productRepository.findByCategoryIgnoreCase(anyString())).thenReturn(products);
 
         
         List<Product> result = productService.getProductsByCategory("Electronics");
 
         
         assertEquals(1, result.size());
-        verify(productRepository).findByCategory("Electronics");
+        verify(productRepository).findByCategoryIgnoreCase("Electronics");
     }
 }

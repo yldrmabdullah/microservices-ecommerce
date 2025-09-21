@@ -54,6 +54,7 @@ class UserServiceTest {
         signupRequest.setName("Test User");
         signupRequest.setEmail("test@example.com");
         signupRequest.setPassword("password123");
+        signupRequest.setConfirmPassword("password123");
 
         signinRequest = new SigninRequest();
         signinRequest.setEmail("test@example.com");
@@ -63,10 +64,10 @@ class UserServiceTest {
     @Test
     void signup_ShouldCreateNewUser_WhenValidRequest() {
         
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(testUser);
-        when(jwtUtil.generateToken(any(User.class))).thenReturn("jwt-token");
+        when(jwtUtil.generateToken(any(UUID.class), anyString())).thenReturn("jwt-token");
 
         
         AuthResponse response = userService.signup(signupRequest);
@@ -78,20 +79,20 @@ class UserServiceTest {
         assertEquals(testUser.getName(), response.getName());
         assertEquals(testUser.getEmail(), response.getEmail());
 
-        verify(userRepository).findByEmail("test@example.com");
+        verify(userRepository).existsByEmail("test@example.com");
         verify(passwordEncoder).encode("password123");
         verify(userRepository).save(any(User.class));
-        verify(jwtUtil).generateToken(any(User.class));
+        verify(jwtUtil).generateToken(any(UUID.class), anyString());
     }
 
     @Test
     void signup_ShouldThrowException_WhenUserAlreadyExists() {
         
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(testUser));
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
 
         
         assertThrows(RuntimeException.class, () -> userService.signup(signupRequest));
-        verify(userRepository).findByEmail("test@example.com");
+        verify(userRepository).existsByEmail("test@example.com");
         verify(userRepository, never()).save(any(User.class));
     }
 
@@ -100,7 +101,7 @@ class UserServiceTest {
         
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-        when(jwtUtil.generateToken(any(User.class))).thenReturn("jwt-token");
+        when(jwtUtil.generateToken(any(UUID.class), anyString())).thenReturn("jwt-token");
 
         
         AuthResponse response = userService.signin(signinRequest);
@@ -114,7 +115,7 @@ class UserServiceTest {
 
         verify(userRepository).findByEmail("test@example.com");
         verify(passwordEncoder).matches("password123", "encodedPassword");
-        verify(jwtUtil).generateToken(testUser);
+        verify(jwtUtil).generateToken(testUser.getId(), testUser.getEmail());
     }
 
     @Test
@@ -127,7 +128,7 @@ class UserServiceTest {
         assertThrows(RuntimeException.class, () -> userService.signin(signinRequest));
         verify(userRepository).findByEmail("test@example.com");
         verify(passwordEncoder).matches("password123", "encodedPassword");
-        verify(jwtUtil, never()).generateToken(any(User.class));
+        verify(jwtUtil, never()).generateToken(any(UUID.class), anyString());
     }
 
     @Test

@@ -8,6 +8,7 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class AuthResponse {
     private String token;
     private String type;
@@ -16,17 +17,7 @@ public class AuthResponse {
     private String email;
     private long expiresIn;
 
-    
-    public AuthResponse(String token, String type, UUID userId, String name, String email, long expiresIn) {
-        this.token = token;
-        this.type = type;
-        this.userId = userId;
-        this.name = name;
-        this.email = email;
-        this.expiresIn = expiresIn;
-    }
 
-    
     public AuthResponse(String token, UUID userId, String name, String email, long expiresIn) {
         this.token = token;
         this.type = "Bearer";
