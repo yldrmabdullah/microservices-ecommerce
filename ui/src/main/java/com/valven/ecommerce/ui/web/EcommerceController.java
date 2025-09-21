@@ -27,10 +27,10 @@ public class EcommerceController {
 
     public EcommerceController() {
         this.productClient = WebClient.builder()
-                .baseUrl("http://localhost:8081/api")
+                .baseUrl("http://gateway:8080/api")
                 .build();
         this.orderClient = WebClient.builder()
-                .baseUrl("http://localhost:8082/api")
+                .baseUrl("http://gateway:8080/api")
                 .build();
     }
 

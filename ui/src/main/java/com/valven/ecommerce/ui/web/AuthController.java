@@ -23,7 +23,7 @@ public class AuthController {
 
     public AuthController() {
         this.userClient = WebClient.builder()
-                .baseUrl("http://localhost:8080/api/auth")
+                .baseUrl("http://gateway:8080/api/auth")
                 .build();
     }
 
