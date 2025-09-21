@@ -16,6 +16,9 @@ COPY gateway/src ./gateway/src
 # Build the application
 RUN mvn clean package -DskipTests -f gateway/pom.xml
 
+# Copy the built JAR to the working directory
+RUN cp gateway/target/*.jar app.jar
+
 # Run the application
 EXPOSE 8080
-CMD ["java", "-jar", "gateway/target/gateway-1.0.0.jar"]
+CMD ["java", "-jar", "app.jar"]

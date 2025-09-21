@@ -16,6 +16,9 @@ COPY services/order-service/src ./services/order-service/src
 # Build the application
 RUN mvn clean package -DskipTests -f services/order-service/pom.xml
 
+# Copy the built JAR to the working directory
+RUN cp services/order-service/target/*.jar app.jar
+
 # Run the application
 EXPOSE 8082
-CMD ["java", "-jar", "services/order-service/target/order-service-1.0.0.jar"]
+CMD ["java", "-jar", "app.jar"]
