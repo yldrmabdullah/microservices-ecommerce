@@ -13,7 +13,7 @@ import java.util.List;
 
 @Slf4j
 @Controller
-@RequestMapping("/insights")
+@RequestMapping("/web/insights")
 @RequiredArgsConstructor
 public class InsightWebController {
     
