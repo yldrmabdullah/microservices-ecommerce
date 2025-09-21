@@ -1,14 +1,18 @@
-﻿# E-commerce Microservices Prototype
+﻿# 🛒 E-commerce Microservices Platform
 
-This repository contains a minimal microservices architecture for an e‑commerce platform. It demonstrates product catalog, cart and order management, an API gateway, monitoring with Actuator/Prometheus, and a lightweight UI.
+Bu repository, e-ticaret platformu için minimal microservices mimarisi içerir. Ürün kataloğu, sepet ve sipariş yönetimi, API gateway, Actuator/Prometheus ile izleme ve hafif bir UI gösterir.
 
-## Modules
+## 🏗️ Modüller
 
-- `services/user-service`: user authentication, registration, JWT token management
-- `services/product-service`: product search, details, inventory
-- `services/order-service`: cart operations and order creation
-- `gateway`: edge routing to internal services
-- `ui`: simple Thymeleaf UI consuming the gateway
+- `services/product-service`: ürün arama, detaylar, stok yönetimi
+- `services/order-service`: sepet işlemleri, sipariş oluşturma, kullanıcı kimlik doğrulama
+- `gateway`: iç servislere edge routing
+- `ui`: gateway'i kullanan basit Thymeleaf UI
+
+## 🚀 Canlı Demo
+
+- **Railway**: [Deploy Rehberi](RAILWAY_DEPLOYMENT.md)
+- **Render**: [Deploy Rehberi](RENDER_DEPLOYMENT.md)
 
 ## Repository layout
 
@@ -36,18 +40,55 @@ run-all.ps1
 
 Request flow: browser → `ui` → `gateway` → domain services (`user-service`, `product-service`, `order-service`). Each service has its own database schema (H2). Gateway centralizes routing. User authentication is handled by `user-service` with JWT tokens. Actuator endpoints expose health and metrics.
 
-## Run locally
+## 🏃‍♂️ Lokal Çalıştırma
 
+### Docker ile (Önerilen)
 ```bash
+docker-compose up --build
+```
+
+### Manuel Çalıştırma
+```bash
+# 1. Tüm servisleri build et
 mvn -q -DskipTests package
-mvn -q -pl services/user-service -am spring-boot:run &
-mvn -q -pl services/product-service -am spring-boot:run &
+
+# 2. Servisleri sırayla başlat
+mvn -q -pl services/product-service spring-boot:run &
 mvn -q -pl services/order-service spring-boot:run &
 mvn -q -pl gateway spring-boot:run &
 mvn -q -pl ui spring-boot:run &
 ```
 
-Open `http://localhost:8085` for the UI. You'll be redirected to the login page.
+### 🌐 Erişim
+- **Ana UI**: http://localhost:8085
+- **API Gateway**: http://localhost:8080
+- **Product Service**: http://localhost:8081
+- **Order Service**: http://localhost:8082
+
+## 🐳 Docker
+
+```bash
+# Tüm servisleri başlat
+docker-compose up --build
+
+# Arka planda çalıştır
+docker-compose up -d
+
+# Servisleri durdur
+docker-compose down
+```
+
+## 📊 Özellikler
+
+- ✅ Kullanıcı kayıt/giriş sistemi
+- ✅ Ürün kataloğu ve arama
+- ✅ Sepet yönetimi (ekleme, silme, temizleme)
+- ✅ Stok yönetimi (otomatik azaltma/artırma)
+- ✅ Sipariş oluşturma ve görüntüleme
+- ✅ Microservices mimarisi
+- ✅ API Gateway ile routing
+- ✅ PostgreSQL veritabanı desteği
+- ✅ Docker containerization
 
 Health checks: `http://localhost:8083/actuator/health`, `http://localhost:8081/actuator/health`, `http://localhost:8082/actuator/health`, `http://localhost:8080/actuator/health`.
 
