@@ -20,7 +20,7 @@ public class NotificationService {
         try {
             log.info("Sending order confirmation email for order: {}", order.getId());
             
-            // Simulate email sending delay
+            
             Thread.sleep(2000);
             
             log.info("Order confirmation email sent successfully for order: {}", order.getId());
@@ -36,7 +36,7 @@ public class NotificationService {
         try {
             log.info("Sending order status update for order: {} with status: {}", order.getId(), status);
             
-            // Simulate notification sending delay
+            
             Thread.sleep(1000);
             
             log.info("Order status update sent successfully for order: {}", order.getId());
@@ -52,7 +52,7 @@ public class NotificationService {
         try {
             log.info("Sending low stock alert for product: {} with stock: {}", productName, currentStock);
             
-            // Simulate alert sending delay
+            
             Thread.sleep(500);
             
             log.info("Low stock alert sent successfully for product: {}", productName);
@@ -68,7 +68,7 @@ public class NotificationService {
         try {
             log.info("Sending inventory update for product: {} with new stock: {}", productName, newStock);
             
-            // Simulate update notification delay
+            
             Thread.sleep(300);
             
             log.info("Inventory update sent successfully for product: {}", productName);

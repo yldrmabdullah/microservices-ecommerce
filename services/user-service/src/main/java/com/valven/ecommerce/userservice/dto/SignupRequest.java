@@ -22,7 +22,7 @@ public class SignupRequest {
     @NotBlank(message = "Confirm password is required")
     private String confirmPassword;
 
-    // Manual getters and setters for compatibility
+    
     public String getName() {
         return name;
     }

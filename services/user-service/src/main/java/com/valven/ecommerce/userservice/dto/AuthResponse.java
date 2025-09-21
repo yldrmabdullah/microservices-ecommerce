@@ -16,7 +16,7 @@ public class AuthResponse {
     private String email;
     private long expiresIn;
 
-    // Constructor for the specific usage pattern
+    
     public AuthResponse(String token, String type, UUID userId, String name, String email, long expiresIn) {
         this.token = token;
         this.type = type;
@@ -26,7 +26,7 @@ public class AuthResponse {
         this.expiresIn = expiresIn;
     }
 
-    // Default constructor with type = "Bearer"
+    
     public AuthResponse(String token, UUID userId, String name, String email, long expiresIn) {
         this.token = token;
         this.type = "Bearer";

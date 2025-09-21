@@ -21,7 +21,7 @@ public class DatabaseHealthIndicator implements HealthIndicator {
     @Override
     public Health health() {
         try {
-            // Test database connectivity
+            
             long orderCount = orderRepository.count();
             long cartCount = cartRepository.count();
             

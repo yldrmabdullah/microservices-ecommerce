@@ -1,0 +1,88 @@
+# Security Configuration for Valven E-commerce Platform
+# This file contains security best practices and configurations
+
+security:
+  # JWT Configuration
+  jwt:
+    secret: "${JWT_SECRET:your-very-strong-secret-key-here-must-be-at-least-256-bits-long-for-hs512-algorithm}"
+    expiration: 86400000 # 24 hours
+    refresh_expiration: 604800000 # 7 days
+    algorithm: "HS512"
+    
+  # Password Policy
+  password:
+    min_length: 8
+    require_uppercase: true
+    require_lowercase: true
+    require_digits: true
+    require_special_chars: true
+    max_attempts: 5
+    lockout_duration: 300000 # 5 minutes
+    
+  # Rate Limiting
+  rate_limiting:
+    auth_endpoints:
+      requests_per_minute: 10
+      burst_capacity: 20
+    product_endpoints:
+      requests_per_minute: 20
+      burst_capacity: 40
+    order_endpoints:
+      requests_per_minute: 5
+      burst_capacity: 10
+      
+  # CORS Configuration
+  cors:
+    allowed_origins:
+      - "http://localhost:3000"
+      - "http://localhost:8085"
+      - "https://valven.com"
+    allowed_methods:
+      - "GET"
+      - "POST"
+      - "PUT"
+      - "DELETE"
+      - "OPTIONS"
+    allowed_headers:
+      - "Authorization"
+      - "Content-Type"
+      - "X-Requested-With"
+    allow_credentials: true
+    max_age: 3600
+    
+  # Security Headers
+  headers:
+    content_security_policy: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+    x_frame_options: "DENY"
+    x_content_type_options: "nosniff"
+    x_xss_protection: "1; mode=block"
+    strict_transport_security: "max-age=31536000; includeSubDomains"
+    
+  # Input Validation
+  validation:
+    max_string_length: 255
+    max_text_length: 1000
+    allowed_file_types:
+      - "image/jpeg"
+      - "image/png"
+      - "image/gif"
+    max_file_size: 5242880 # 5MB
+    
+  # Database Security
+  database:
+    connection_pool_size: 10
+    connection_timeout: 30000
+    idle_timeout: 600000
+    max_lifetime: 1800000
+    leak_detection_threshold: 60000
+    
+  # Logging Security
+  logging:
+    mask_sensitive_data: true
+    log_level: "INFO"
+    audit_events:
+      - "AUTHENTICATION_SUCCESS"
+      - "AUTHENTICATION_FAILURE"
+      - "AUTHORIZATION_FAILURE"
+      - "DATA_ACCESS"
+      - "DATA_MODIFICATION"

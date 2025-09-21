@@ -69,7 +69,7 @@ public class User {
         this.isActive = true;
     }
 
-    // Manual getters and setters for compatibility
+    
     public UUID getId() {
         return id;
     }

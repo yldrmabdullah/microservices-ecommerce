@@ -13,7 +13,7 @@ public class SigninRequest {
     @NotBlank(message = "Password is required")
     private String password;
 
-    // Manual getters and setters for compatibility
+    
     public String getEmail() {
         return email;
     }

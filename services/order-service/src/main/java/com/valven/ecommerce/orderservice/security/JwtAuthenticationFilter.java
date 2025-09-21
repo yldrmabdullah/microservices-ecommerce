@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         
         String path = request.getRequestURI();
         
-        // Skip authentication for auth endpoints and actuator
+        
         if (path.startsWith("/api/auth/") || path.startsWith("/actuator/")) {
             filterChain.doFilter(request, response);
             return;
@@ -44,11 +44,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     String userId = jwtUtil.getUserIdFromToken(token).toString();
                     String email = jwtUtil.getEmailFromToken(token);
                     
-                    // Set user info in request attributes for easy access
+                    
                     request.setAttribute("userId", userId);
                     request.setAttribute("userEmail", email);
                     
-                    // Create authentication object
+                    
                     UsernamePasswordAuthenticationToken authentication = 
                         new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
                     SecurityContextHolder.getContext().setAuthentication(authentication);

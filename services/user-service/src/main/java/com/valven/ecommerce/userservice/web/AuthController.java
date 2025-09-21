@@ -2,6 +2,13 @@ package com.valven.ecommerce.userservice.web;
 
 import com.valven.ecommerce.userservice.dto.*;
 import com.valven.ecommerce.userservice.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +20,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "User authentication and registration endpoints")
 public class AuthController {
 
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
@@ -23,8 +31,17 @@ public class AuthController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Register a new user", description = "Creates a new user account and returns authentication token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User registered successfully",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input or user already exists",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<AuthResponse>> signup(@Valid @RequestBody SignupRequest request) {
+    public ResponseEntity<ApiResponse<AuthResponse>> signup(
+            @Parameter(description = "User registration details", required = true)
+            @Valid @RequestBody SignupRequest request) {
         try {
             log.info("Signup request received for email: {}", request.getEmail());
             AuthResponse response = userService.signup(request);
@@ -37,8 +54,17 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Authenticate user", description = "Authenticates user credentials and returns JWT token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Login successful",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid credentials",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
     @PostMapping("/signin")
-    public ResponseEntity<ApiResponse<AuthResponse>> signin(@Valid @RequestBody SigninRequest request) {
+    public ResponseEntity<ApiResponse<AuthResponse>> signin(
+            @Parameter(description = "User login credentials", required = true)
+            @Valid @RequestBody SigninRequest request) {
         try {
             log.info("Signin request received for email: {}", request.getEmail());
             AuthResponse response = userService.signin(request);
@@ -50,8 +76,17 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Validate JWT token", description = "Validates the provided JWT token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Token validation completed",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid token",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
     @GetMapping("/validate")
-    public ResponseEntity<ApiResponse<Boolean>> validateToken(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ApiResponse<Boolean>> validateToken(
+            @Parameter(description = "JWT token in Authorization header", required = true)
+            @RequestHeader("Authorization") String token) {
         try {
             if (token.startsWith("Bearer ")) {
                 token = token.substring(7);
@@ -66,8 +101,17 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Get user information", description = "Retrieves user information from JWT token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User information retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid token or user not found",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
     @GetMapping("/user")
-    public ResponseEntity<ApiResponse<UserResponse>> getUserInfo(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ApiResponse<UserResponse>> getUserInfo(
+            @Parameter(description = "JWT token in Authorization header", required = true)
+            @RequestHeader("Authorization") String token) {
         try {
             if (token.startsWith("Bearer ")) {
                 token = token.substring(7);
