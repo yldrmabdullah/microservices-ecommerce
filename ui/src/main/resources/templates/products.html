@@ -32,7 +32,7 @@
         <div>
             <a href="/cart" class="cart-icon" role="button">
                 🛒 Cart
-                <span class="cart-count">0</span>
+                <span class="cart-count" th:text="${cartCount != null ? cartCount : 0}">0</span>
             </a>
         </div>
     </nav>

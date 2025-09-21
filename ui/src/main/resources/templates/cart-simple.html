@@ -53,10 +53,16 @@
             <h3>Cart Summary</h3>
             <p><strong>Total Items: </strong><span th:text="${cart.items.size()}">0</span></p>
             <p><strong>Total Amount: $</strong><span th:text="${#aggregates.sum(cart.items.![price * quantity])}">0.00</span></p>
-            <form method="post" action="/order/create" style="margin-top: 1rem;">
-                <input type="hidden" name="userId" th:value="${userId}">
-                <button type="submit" style="background: #28a745; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-size: 1.1rem;">Proceed to Checkout</button>
-            </form>
+            <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                <form method="post" action="/order/create" style="flex: 1;">
+                    <input type="hidden" name="userId" th:value="${userId}">
+                    <button type="submit" style="background: #28a745; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-size: 1.1rem; width: 100%;">Proceed to Checkout</button>
+                </form>
+                <form method="post" action="/cart/clear" style="flex: 1;">
+                    <input type="hidden" name="userId" th:value="${userId}">
+                    <button type="submit" style="background: #dc3545; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-size: 1.1rem; width: 100%;" onclick="return confirm('Are you sure you want to remove all items from your cart?')">Remove All</button>
+                </form>
+            </div>
         </div>
     </div>
     

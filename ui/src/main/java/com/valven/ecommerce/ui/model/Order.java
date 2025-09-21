@@ -1,5 +1,6 @@
 package com.valven.ecommerce.ui.model;
 
+import java.time.Instant;
 import java.util.List;
 
 public class Order {
@@ -8,6 +9,7 @@ public class Order {
     private List<CartItem> items;
     private Double totalAmount;
     private String status;
+    private Instant createdAt;
 
     public Order() {}
 
@@ -49,5 +51,13 @@ public class Order {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 }

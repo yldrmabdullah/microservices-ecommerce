@@ -27,9 +27,8 @@
 
         <div class="order-details">
             <h2>Order Details</h2>
-            <p><strong>Order ID:</strong> <span th:text="${order.id}">12345</span></p>
-            <p><strong>User ID:</strong> <span th:text="${order.userId}">user123</span></p>
             <p><strong>Status:</strong> <span th:text="${order.status != null ? order.status : 'Processing'}">Processing</span></p>
+            <p><strong>Order Date:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">21/09/2025 10:22</span></p>
             
             <h3>Items Ordered:</h3>
             <div th:each="item : ${order.items}" class="order-item">
@@ -44,7 +43,7 @@
             <div class="order-total">
                 <div style="display: flex; justify-content: space-between;">
                     <span>Total Amount:</span>
-                    <span th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}">$199.98</span>
+                    <span th:text="'$' + ${#numbers.formatDecimal(order.totalAmount != null ? order.totalAmount : order.items.![price * quantity].sum(), 1, 2)}">$199.98</span>
                 </div>
             </div>
         </div>
