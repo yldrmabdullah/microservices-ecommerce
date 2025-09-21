@@ -6,6 +6,8 @@ import com.valven.ecommerce.userservice.repository.UserRepository;
 import com.valven.ecommerce.userservice.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
 
     @Transactional
+    @CacheEvict(value = "users", allEntries = true)
     public AuthResponse signup(SignupRequest request) {
         log.info("Processing signup request for email: {}", request.getEmail());
 
@@ -86,7 +89,9 @@ public class UserService {
         );
     }
 
+    @Cacheable(value = "users", key = "#userId")
     public UserResponse getUserById(UUID userId) {
+        log.info("Fetching user by ID: {}", userId);
         User user = userRepository.findByIdAndIsActiveTrue(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -100,7 +105,9 @@ public class UserService {
         );
     }
 
+    @Cacheable(value = "users", key = "#email")
     public UserResponse getUserByEmail(String email) {
+        log.info("Fetching user by email: {}", email);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 

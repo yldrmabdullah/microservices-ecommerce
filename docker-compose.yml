@@ -1,6 +1,54 @@
 version: '3.8'
 
 services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - ecommerce-network
+
+  eureka-server:
+    build:
+      context: .
+      dockerfile: services/eureka-server/Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - ecommerce-network
+
+  config-server:
+    build:
+      context: .
+      dockerfile: services/config-server/Dockerfile
+    ports:
+      - "8888:8888"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - eureka-server
+    networks:
+      - ecommerce-network
+
+  user-service:
+    build:
+      context: .
+      dockerfile: services/user-service/Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/userdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_REDIS_HOST=redis
+    depends_on:
+      - postgres
+      - redis
+      - eureka-server
+    networks:
+      - ecommerce-network
+
   product-service:
     build:
       context: .
@@ -12,8 +60,11 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/productdb
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_REDIS_HOST=redis
     depends_on:
       - postgres
+      - redis
+      - eureka-server
     networks:
       - ecommerce-network
 
@@ -28,8 +79,11 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/orderdb
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_REDIS_HOST=redis
     depends_on:
       - postgres
+      - redis
+      - eureka-server
     networks:
       - ecommerce-network
 
@@ -41,9 +95,13 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_REDIS_HOST=redis
     depends_on:
+      - user-service
       - product-service
       - order-service
+      - redis
+      - eureka-server
     networks:
       - ecommerce-network
 
@@ -71,6 +129,13 @@ services:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     ports:
       - "5432:5432"
+    networks:
+      - ecommerce-network
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    ports:
+      - "9411:9411"
     networks:
       - ecommerce-network
 

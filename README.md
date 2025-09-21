@@ -1,66 +1,130 @@
 ﻿# E-commerce Microservices Platform
 
-This repository contains a minimal microservices architecture for an e-commerce platform. It includes product catalog, cart and order management, API gateway, monitoring with Actuator/Prometheus, and a lightweight UI.
+Professional microservices architecture for e-commerce platform with advanced features including service discovery, centralized configuration, caching, monitoring, and security.
 
-## Modules
+## Architecture Overview
 
-- `services/product-service`: product search, details, stock management
-- `services/order-service`: cart operations, order creation, user authentication
-- `gateway`: edge routing to internal services
-- `ui`: simple Thymeleaf UI using the gateway
+This platform implements a comprehensive microservices architecture following industry best practices:
 
-## Repository layout
+- **Service Discovery**: Eureka Server for dynamic service registration and discovery
+- **API Gateway**: Spring Cloud Gateway with rate limiting, authentication, and circuit breaker
+- **Centralized Configuration**: Spring Cloud Config Server for configuration management
+- **Caching**: Redis for distributed caching across services
+- **Monitoring**: Micrometer, Prometheus, and Zipkin for observability
+- **Security**: JWT authentication with rate limiting and request filtering
+- **Resilience**: Circuit breaker pattern and retry mechanisms
+
+## Services
+
+### Core Services
+- **Eureka Server** (Port 8761): Service discovery and registration
+- **Config Server** (Port 8888): Centralized configuration management
+- **User Service** (Port 8083): User authentication, registration, and profile management
+- **Product Service** (Port 8081): Product catalog, search, and inventory management
+- **Order Service** (Port 8082): Shopping cart and order processing
+- **API Gateway** (Port 8080): Edge service with routing, security, and rate limiting
+- **UI Application** (Port 8085): Thymeleaf-based web interface
+
+### Infrastructure Services
+- **Redis** (Port 6379): Distributed caching and rate limiting
+- **PostgreSQL** (Port 5432): Primary database for production
+- **Zipkin** (Port 9411): Distributed tracing
+
+## Technology Stack
+
+### Backend
+- **Java 21** with Spring Boot 3.3.5
+- **Spring Cloud Gateway** for API gateway functionality
+- **Spring Cloud Netflix Eureka** for service discovery
+- **Spring Cloud Config** for centralized configuration
+- **Spring Data JPA** with H2 (development) and PostgreSQL (production)
+- **Spring Security** with JWT authentication
+- **Spring Cache** with Redis integration
+
+### Monitoring & Observability
+- **Micrometer** for application metrics
+- **Prometheus** for metrics collection and storage
+- **Zipkin** for distributed tracing
+- **Spring Boot Actuator** for health checks and monitoring
+
+### Caching & Performance
+- **Redis** for distributed caching
+- **Spring Cache** annotations for transparent caching
+- **Rate Limiting** with Redis-based token bucket algorithm
+
+### Security
+- **JWT (JSON Web Tokens)** for stateless authentication
+- **Rate Limiting** per user and IP address
+- **CORS** configuration for cross-origin requests
+- **Request filtering** and validation
+
+## Repository Structure
 
 ```
-services/
-  user-service/
-  product-service/
-  order-service/
-gateway/
-ui/
-pom.xml (parent)
-README.md
-run-all.ps1
+valven/
+├── services/
+│   ├── eureka-server/          # Service discovery server
+│   ├── config-server/          # Centralized configuration
+│   ├── user-service/           # User management and authentication
+│   ├── product-service/        # Product catalog and inventory
+│   └── order-service/          # Shopping cart and orders
+├── gateway/                    # API Gateway with security and routing
+├── ui/                        # Web user interface
+├── docker-compose.yml         # Multi-container orchestration
+├── pom.xml                    # Parent Maven configuration
+└── README.md                  # This file
 ```
 
-## Technology
+## Quick Start
 
-- Java 21, Spring Boot 3, Spring Cloud Gateway
-- Spring Data JPA with in-memory H2 for persistence
-- Spring Security with JWT authentication
-- Actuator + Micrometer Prometheus for metrics
-- Thymeleaf for server-rendered UI
+### Prerequisites
+- Java 21+
+- Maven 3.8+
+- Docker & Docker Compose (optional)
+- Redis (for production features)
 
-## Architecture
+### Local Development (Without Docker)
 
-Request flow: browser → `ui` → `gateway` → domain services (`user-service`, `product-service`, `order-service`). Each service has its own database schema (H2). Gateway centralizes routing. User authentication is handled by `user-service` with JWT tokens. Actuator endpoints expose health and metrics.
-
-## Local Development
-
-### Using Docker (Recommended)
+1. **Start Redis** (required for caching and rate limiting):
 ```bash
-docker-compose up --build
+# Using Docker
+docker run -d -p 6379:6379 redis:7-alpine
+
+# Or install Redis locally
+# macOS: brew install redis && brew services start redis
+# Ubuntu: sudo apt install redis-server && sudo systemctl start redis
 ```
 
-### Manual Setup
+2. **Build the project**:
 ```bash
-# 1. Build all services
-mvn -q -DskipTests package
-
-# 2. Start services in order
-mvn -q -pl services/product-service spring-boot:run &
-mvn -q -pl services/order-service spring-boot:run &
-mvn -q -pl gateway spring-boot:run &
-mvn -q -pl ui spring-boot:run &
+mvn clean compile
 ```
 
-### Access Points
-- **Main UI**: http://localhost:8085
-- **API Gateway**: http://localhost:8080
-- **Product Service**: http://localhost:8081
-- **Order Service**: http://localhost:8082
+3. **Start services in order**:
+```bash
+# Terminal 1: Eureka Server
+cd services/eureka-server && mvn spring-boot:run
 
-## Docker
+# Terminal 2: Config Server
+cd services/config-server && mvn spring-boot:run
+
+# Terminal 3: User Service
+cd services/user-service && mvn spring-boot:run
+
+# Terminal 4: Product Service
+cd services/product-service && mvn spring-boot:run
+
+# Terminal 5: Order Service
+cd services/order-service && mvn spring-boot:run
+
+# Terminal 6: API Gateway
+cd gateway && mvn spring-boot:run
+
+# Terminal 7: UI Application
+cd ui && mvn spring-boot:run
+```
+
+### Docker Compose (Recommended)
 
 ```bash
 # Start all services
@@ -73,48 +137,105 @@ docker-compose up -d
 docker-compose down
 ```
 
+## Access Points
+
+### Application URLs
+- **Main UI**: http://localhost:8085
+- **API Gateway**: http://localhost:8080
+- **Eureka Dashboard**: http://localhost:8761
+- **Config Server**: http://localhost:8888
+
+### Service URLs
+- **User Service**: http://localhost:8083
+- **Product Service**: http://localhost:8081
+- **Order Service**: http://localhost:8082
+
+### Monitoring URLs
+- **Prometheus Metrics**: http://localhost:8080/actuator/prometheus
+- **Health Checks**: http://localhost:8080/actuator/health
+- **Zipkin Tracing**: http://localhost:9411
+
 ## Features
 
-- ✅ User registration/login system
-- ✅ Product catalog and search
-- ✅ Cart management (add, remove, clear)
-- ✅ Stock management (automatic reduction/increase)
-- ✅ Order creation and viewing
-- ✅ Microservices architecture
-- ✅ API Gateway routing
-- ✅ PostgreSQL database support
-- ✅ Docker containerization
+### Core E-commerce Features
+- ✅ User registration and authentication with JWT
+- ✅ Product catalog with search and filtering
+- ✅ Shopping cart management
+- ✅ Order processing and history
+- ✅ Inventory management with stock tracking
 
-Health checks: `http://localhost:8083/actuator/health`, `http://localhost:8081/actuator/health`, `http://localhost:8082/actuator/health`, `http://localhost:8080/actuator/health`.
+### Microservices Features
+- ✅ Service discovery with Eureka
+- ✅ Centralized configuration management
+- ✅ API Gateway with intelligent routing
+- ✅ Distributed caching with Redis
+- ✅ Circuit breaker pattern for resilience
+- ✅ Rate limiting for API protection
 
-## Sample requests
+### Monitoring & Observability
+- ✅ Health checks and metrics collection
+- ✅ Distributed tracing with Zipkin
+- ✅ Prometheus metrics integration
+- ✅ Request/response logging
+- ✅ Performance monitoring
 
-### Authentication
-```bash
-# Register a new user
-curl -X POST http://localhost:8080/api/auth/signup -H 'Content-Type: application/json' -d '{"name":"John Doe","email":"john@example.com","password":"password123","confirmPassword":"password123"}'
+### Security Features
+- ✅ JWT-based authentication
+- ✅ Rate limiting per user and IP
+- ✅ CORS configuration
+- ✅ Request validation and filtering
+- ✅ Secure password encoding
 
-# Login
-curl -X POST http://localhost:8080/api/auth/signin -H 'Content-Type: application/json' -d '{"email":"john@example.com","password":"password123"}'
-```
+## Configuration
 
-### Products
-```bash
-curl -X POST http://localhost:8081/api/products -H 'Content-Type: application/json' -d '{"sku":"SKU-1","name":"Phone","description":"5G","price":799,"stock":10}'
-curl http://localhost:8080/api/products
-```
+### Environment Variables
+- `SPRING_PROFILES_ACTIVE`: Set to `prod` for production mode
+- `SPRING_REDIS_HOST`: Redis server hostname (default: localhost)
+- `EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE`: Eureka server URL
 
-### Cart (requires authentication token)
-```bash
-# Get token from login response, then use it
-curl -X POST http://localhost:8080/api/carts/user-1/items -H 'Content-Type: application/json' -H 'Authorization: Bearer YOUR_JWT_TOKEN' -d '{"productId":1,"quantity":2}'
-curl http://localhost:8080/api/carts/user-1 -H 'Authorization: Bearer YOUR_JWT_TOKEN'
-```
+### Rate Limiting Configuration
+- **Auth endpoints**: 10 requests/minute per user
+- **Product endpoints**: 20 requests/minute per IP
+- **Order endpoints**: 5 requests/minute per user
 
-## Tests
+### Cache Configuration
+- **User data**: 10 minutes TTL
+- **Product data**: 5 minutes TTL
+- **Order data**: 10 minutes TTL
 
-Each module includes unit tests samples (add more as needed) and can be run with `mvn test`.
+## Development Guidelines
 
-## Deploy preview
+### Code Quality
+- Follow Clean Code principles
+- Use meaningful variable and method names
+- Implement proper error handling
+- Add comprehensive logging
+- Write unit tests for critical functionality
 
-For a quick preview on a single host, run all modules as shown above. For containerized deployment, create Dockerfiles per module and route traffic via the gateway service.
+### Microservices Best Practices
+- Each service has a single responsibility
+- Services communicate via well-defined APIs
+- Database per service pattern
+- Stateless service design
+- Proper error handling and fallback mechanisms
+
+## Troubleshooting
+
+### Common Issues
+1. **Port conflicts**: Ensure all required ports are available
+2. **Redis connection**: Verify Redis is running and accessible
+3. **Service discovery**: Check Eureka server is running first
+4. **Database issues**: Verify database connections and schemas
+
+### Logs
+- Check individual service logs for detailed error information
+- Use Zipkin for tracing request flows
+- Monitor Prometheus metrics for performance issues
+
+## Contributing
+
+1. Follow the established code style and patterns
+2. Add appropriate tests for new features
+3. Update documentation for any API changes
+4. Ensure all services start successfully
+5. Verify integration tests pass

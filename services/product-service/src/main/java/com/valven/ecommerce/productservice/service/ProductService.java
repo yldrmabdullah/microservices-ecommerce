@@ -6,6 +6,8 @@ import com.valven.ecommerce.productservice.exception.ProductNotFoundException;
 import com.valven.ecommerce.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    @Cacheable(value = "products", key = "'all'")
     public List<Product> getAllProducts() {
         log.info("Fetching all products");
         return productRepository.findAll();
@@ -32,6 +35,7 @@ public class ProductService {
         return productRepository.findByNameContainingIgnoreCase(query.trim());
     }
 
+    @Cacheable(value = "products", key = "#id")
     public Product getProductById(Long id) {
         log.info("Fetching product with id: {}", id);
         return productRepository.findById(id)
@@ -45,6 +49,7 @@ public class ProductService {
     }
 
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public Product createProduct(Product product) {
         log.info("Creating new product: {}", product.getName());
         
@@ -58,6 +63,7 @@ public class ProductService {
     }
 
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public Product updateProduct(Long id, Product updatedProduct) {
         log.info("Updating product with id: {}", id);
         
@@ -83,6 +89,7 @@ public class ProductService {
     }
 
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public void deleteProduct(Long id) {
         log.info("Deleting product with id: {}", id);
         Product product = getProductById(id);
