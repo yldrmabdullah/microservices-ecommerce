@@ -30,21 +30,21 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleIllegalArgument(IllegalArgumentException ex, WebRequest request) {
         log.error("Illegal argument: {} for request: {}", ex.getMessage(), request.getDescription(false));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(ex.getMessage(), "INVALID_ARGUMENT"));
+                .body(ApiResponse.<Object>error(ex.getMessage(), "INVALID_ARGUMENT"));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Object>> handleAccessDenied(AccessDeniedException ex, WebRequest request) {
         log.error("Access denied: {} for request: {}", ex.getMessage(), request.getDescription(false));
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ApiResponse.error("Access denied", "ACCESS_DENIED"));
+                .body(ApiResponse.<Object>error("Access denied", "ACCESS_DENIED"));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponse<Object>> handleBadCredentials(BadCredentialsException ex, WebRequest request) {
         log.error("Bad credentials for request: {}", request.getDescription(false));
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ApiResponse.error("Invalid credentials", "BAD_CREDENTIALS"));
+                .body(ApiResponse.<Object>error("Invalid credentials", "BAD_CREDENTIALS"));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
         
         log.error("Validation failed: {} for request: {}", errors, request.getDescription(false));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error("Validation failed", "VALIDATION_ERROR", errors));
+                .body(ApiResponse.<Object>error("Validation failed", "VALIDATION_ERROR", errors));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -74,55 +74,55 @@ public class GlobalExceptionHandler {
         
         log.error("Constraint violation: {} for request: {}", errors, request.getDescription(false));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error("Constraint violation", "CONSTRAINT_VIOLATION", errors));
+                .body(ApiResponse.<Object>error("Constraint violation", "CONSTRAINT_VIOLATION", errors));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Object>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, WebRequest request) {
         log.error("Malformed JSON request: {} for request: {}", ex.getMessage(), request.getDescription(false));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error("Malformed JSON request", "MALFORMED_JSON"));
+                .body(ApiResponse.<Object>error("Malformed JSON request", "MALFORMED_JSON"));
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ApiResponse<Object>> handleMissingParameter(MissingServletRequestParameterException ex, WebRequest request) {
         log.error("Missing required parameter: {} for request: {}", ex.getParameterName(), request.getDescription(false));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error("Missing required parameter: " + ex.getParameterName(), "MISSING_PARAMETER"));
+                .body(ApiResponse.<Object>error("Missing required parameter: " + ex.getParameterName(), "MISSING_PARAMETER"));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiResponse<Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
         log.error("Type mismatch for parameter: {} for request: {}", ex.getName(), request.getDescription(false));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error("Invalid parameter type for: " + ex.getName(), "TYPE_MISMATCH"));
+                .body(ApiResponse.<Object>error("Invalid parameter type for: " + ex.getName(), "TYPE_MISMATCH"));
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiResponse<Object>> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex, WebRequest request) {
         log.error("Method not supported: {} for request: {}", ex.getMethod(), request.getDescription(false));
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
-                .body(ApiResponse.error("Method not supported: " + ex.getMethod(), "METHOD_NOT_ALLOWED"));
+                .body(ApiResponse.<Object>error("Method not supported: " + ex.getMethod(), "METHOD_NOT_ALLOWED"));
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleNoHandlerFound(NoHandlerFoundException ex, WebRequest request) {
         log.error("No handler found for: {} for request: {}", ex.getRequestURL(), request.getDescription(false));
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.error("No handler found for: " + ex.getRequestURL(), "NOT_FOUND"));
+                .body(ApiResponse.<Object>error("No handler found for: " + ex.getRequestURL(), "NOT_FOUND"));
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Object>> handleRuntimeException(RuntimeException ex, WebRequest request) {
         log.error("Runtime exception: {} for request: {}", ex.getMessage(), request.getDescription(false), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("An error occurred: " + ex.getMessage(), "RUNTIME_ERROR"));
+                .body(ApiResponse.<Object>error("An error occurred: " + ex.getMessage(), "RUNTIME_ERROR"));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleGenericException(Exception ex, WebRequest request) {
         log.error("Unexpected error: {} for request: {}", ex.getMessage(), request.getDescription(false), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("An unexpected error occurred", "INTERNAL_ERROR"));
+                .body(ApiResponse.<Object>error("An unexpected error occurred", "INTERNAL_ERROR"));
     }
 }

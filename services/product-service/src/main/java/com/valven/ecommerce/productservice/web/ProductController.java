@@ -43,21 +43,21 @@ public class ProductController {
             products = productService.searchProducts(query);
         }
         
-        return ResponseEntity.ok(ApiResponse.success("Products retrieved successfully", products));
+        return ResponseEntity.ok(ApiResponse.<List<Product>>success("Products retrieved successfully", products));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Product>> getProductById(@PathVariable Long id) {
         log.info("Fetching product with id: {}", id);
         Product product = productService.getProductById(id);
-        return ResponseEntity.ok(ApiResponse.success("Product retrieved successfully", product));
+        return ResponseEntity.ok(ApiResponse.<Product>success("Product retrieved successfully", product));
     }
 
     @GetMapping("/sku/{sku}")
     public ResponseEntity<ApiResponse<Product>> getProductBySku(@PathVariable String sku) {
         log.info("Fetching product with SKU: {}", sku);
         Product product = productService.getProductBySku(sku);
-        return ResponseEntity.ok(ApiResponse.success("Product retrieved successfully", product));
+        return ResponseEntity.ok(ApiResponse.<Product>success("Product retrieved successfully", product));
     }
 
     @PostMapping
@@ -66,7 +66,7 @@ public class ProductController {
         Product savedProduct = productService.createProduct(product);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .location(URI.create("/api/products/" + savedProduct.getId()))
-                .body(ApiResponse.success("Product created successfully", savedProduct));
+                .body(ApiResponse.<Product>success("Product created successfully", savedProduct));
     }
 
     @PutMapping("/{id}")
@@ -75,7 +75,7 @@ public class ProductController {
             @Valid @RequestBody Product product) {
         log.info("Updating product with id: {}", id);
         Product updatedProduct = productService.updateProduct(id, product);
-        return ResponseEntity.ok(ApiResponse.success("Product updated successfully", updatedProduct));
+        return ResponseEntity.ok(ApiResponse.<Product>success("Product updated successfully", updatedProduct));
     }
 
     @DeleteMapping("/{id}")
@@ -109,14 +109,14 @@ public class ProductController {
             @RequestParam int quantity) {
         log.info("Checking stock for product {} with quantity {}", id, quantity);
         boolean hasEnoughStock = productService.hasEnoughStock(id, quantity);
-        return ResponseEntity.ok(ApiResponse.success("Stock check completed", hasEnoughStock));
+        return ResponseEntity.ok(ApiResponse.<Boolean>success("Stock check completed", hasEnoughStock));
     }
 
     @GetMapping("/category/{category}")
     public ResponseEntity<ApiResponse<List<Product>>> getProductsByCategory(@PathVariable String category) {
         log.info("Fetching products by category: {}", category);
         List<Product> products = productService.getProductsByCategory(category);
-        return ResponseEntity.ok(ApiResponse.success("Products retrieved successfully", products));
+        return ResponseEntity.ok(ApiResponse.<List<Product>>success("Products retrieved successfully", products));
     }
 
     @GetMapping("/low-stock")
@@ -124,14 +124,14 @@ public class ProductController {
             @RequestParam(defaultValue = "5") int threshold) {
         log.info("Fetching products with stock below threshold: {}", threshold);
         List<Product> products = productService.getLowStockProducts(threshold);
-        return ResponseEntity.ok(ApiResponse.success("Low stock products retrieved successfully", products));
+        return ResponseEntity.ok(ApiResponse.<List<Product>>success("Low stock products retrieved successfully", products));
     }
 
     @GetMapping("/out-of-stock")
     public ResponseEntity<ApiResponse<List<Product>>> getOutOfStockProducts() {
         log.info("Fetching out of stock products");
         List<Product> products = productService.getLowStockProducts(1);
-        return ResponseEntity.ok(ApiResponse.success("Out of stock products retrieved successfully", products));
+        return ResponseEntity.ok(ApiResponse.<List<Product>>success("Out of stock products retrieved successfully", products));
     }
 }
 

@@ -17,13 +17,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleProductNotFound(ProductNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.error(ex.getMessage(), "PRODUCT_NOT_FOUND"));
+                .body(ApiResponse.<Object>error(ex.getMessage(), "PRODUCT_NOT_FOUND"));
     }
 
     @ExceptionHandler(InsufficientStockException.class)
     public ResponseEntity<ApiResponse<Object>> handleInsufficientStock(InsufficientStockException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(ex.getMessage(), "INSUFFICIENT_STOCK"));
+                .body(ApiResponse.<Object>error(ex.getMessage(), "INSUFFICIENT_STOCK"));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -33,24 +33,24 @@ public class GlobalExceptionHandler {
             errors.put(error.getField(), error.getDefaultMessage()));
         
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error("Validation failed: " + errors.toString(), "VALIDATION_ERROR"));
+                .body(ApiResponse.<Object>error("Validation failed: " + errors.toString(), "VALIDATION_ERROR"));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiResponse<Object>> handleConstraintViolation(ConstraintViolationException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error("Constraint violation: " + ex.getMessage(), "CONSTRAINT_VIOLATION"));
+                .body(ApiResponse.<Object>error("Constraint violation: " + ex.getMessage(), "CONSTRAINT_VIOLATION"));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Object>> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(ex.getMessage(), "INVALID_ARGUMENT"));
+                .body(ApiResponse.<Object>error(ex.getMessage(), "INVALID_ARGUMENT"));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleGenericException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("An unexpected error occurred: " + ex.getMessage(), "INTERNAL_ERROR"));
+                .body(ApiResponse.<Object>error("An unexpected error occurred: " + ex.getMessage(), "INTERNAL_ERROR"));
     }
 }

@@ -55,7 +55,7 @@ public class AuthController {
             authResponse.setEmail(savedUser.getEmail());
 
             log.info("User signed up successfully: {}", request.getEmail());
-            return ResponseEntity.ok(ApiResponse.success("User created successfully", authResponse));
+            return ResponseEntity.ok(ApiResponse.<AuthResponse>success("User created successfully", authResponse));
 
         } catch (Exception e) {
             log.error("Error during signup: {}", e.getMessage(), e);
@@ -94,7 +94,7 @@ public class AuthController {
             authResponse.setEmail(user.getEmail());
 
             log.info("User signed in successfully: {}", request.getEmail());
-            return ResponseEntity.ok(ApiResponse.success("Login successful", authResponse));
+            return ResponseEntity.ok(ApiResponse.<AuthResponse>success("Login successful", authResponse));
 
         } catch (Exception e) {
             log.error("Error during signin: {}", e.getMessage(), e);

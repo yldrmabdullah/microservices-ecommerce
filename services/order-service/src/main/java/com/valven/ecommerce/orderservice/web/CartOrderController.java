@@ -56,7 +56,7 @@ public class CartOrderController {
             Cart saved = cartRepository.save(cart);
             log.info("Item added to cart for user: {}, product: {}, quantity: {}", 
                     userId, item.getProductId(), item.getQuantity());
-            return ResponseEntity.ok(ApiResponse.success("Item added to cart successfully", saved));
+            return ResponseEntity.ok(ApiResponse.<Cart>success("Item added to cart successfully", saved));
         } catch (Exception e) {
             log.error("Error adding item to cart: {}", e.getMessage(), e);
             return ResponseEntity.internalServerError()
