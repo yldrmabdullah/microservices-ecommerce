@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>AI Insights - E-commerce Platform</title>
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2/css/pico.min.css"/>
+    <style>
+        .insights-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .insight-card { border: 1px solid #e0e0e0; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .insight-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .insight-type { background: #007bff; color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8em; font-weight: bold; }
+        .insight-confidence { background: #28a745; color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8em; font-weight: bold; }
+        .insight-title { color: #2c3e50; font-size: 1.3em; font-weight: bold; margin-bottom: 0.5rem; }
+        .insight-description { color: #6c757d; margin-bottom: 1rem; line-height: 1.6; }
+        .insight-recommendation { background: #e8f5e8; border-left: 4px solid #28a745; padding: 1rem; border-radius: 4px; margin: 1rem 0; }
+        .insight-metadata { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e9ecef; font-size: 0.9em; color: #6c757d; }
+        .insight-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .tag { background: #f8f9fa; color: #495057; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8em; }
+        .generate-form { background: #f8f9fa; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid #e9ecef; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: bold; color: #495057; }
+        .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-size: 1rem; }
+        .form-group textarea { height: 100px; resize: vertical; }
+        .btn-primary { background: #007bff; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: background 0.2s; }
+        .btn-primary:hover { background: #0056b3; }
+        .btn-secondary { background: #6c757d; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; text-decoration: none; display: inline-block; }
+        .btn-secondary:hover { background: #545b62; }
+        .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .error { background: #ffebee; color: #c62828; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; }
+        .success { background: #e8f5e8; color: #2e7d32; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; }
+        .loading { text-align: center; padding: 2rem; color: #6c757d; }
+        .empty-state { text-align: center; padding: 3rem; color: #6c757d; }
+        .insight-types { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .type-card { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .type-card:hover { background: #e9ecef; transform: translateY(-2px); }
+        .type-card.selected { background: #007bff; color: white; }
+    </style>
+</head>
+<body>
+<main class="container">
+    <nav class="nav">
+        <h1>🤖 AI Insights Dashboard</h1>
+        <div>
+            <a href="/" class="btn-secondary">← Back to Home</a>
+        </div>
+    </nav>
+
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <div th:if="${success}" class="success" th:text="${success}"></div>
+
+    <!-- Generate New Insight Form -->
+    <div class="generate-form">
+        <h2>Generate New AI Insight</h2>
+        <form method="post" action="/api/ai-insights/generate" id="insightForm">
+            <div class="form-group">
+                <label for="userId">User ID</label>
+                <input type="text" id="userId" name="userId" th:value="${userId}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="insightType">Insight Type</label>
+                <select id="insightType" name="insightType" required>
+                    <option value="">Select insight type...</option>
+                    <option value="product_recommendation">Product Recommendation</option>
+                    <option value="user_behavior">User Behavior Analysis</option>
+                    <option value="sales_trend">Sales Trend Analysis</option>
+                    <option value="inventory_optimization">Inventory Optimization</option>
+                    <option value="customer_segmentation">Customer Segmentation</option>
+                    <option value="price_optimization">Price Optimization</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="context">Context (Optional)</label>
+                <input type="text" id="context" name="context" placeholder="e.g., shopping_session, product_view, checkout">
+            </div>
+            
+            <div class="form-group">
+                <label for="preferences">Preferences (Optional)</label>
+                <textarea id="preferences" name="preferences" placeholder="Enter user preferences or additional context..."></textarea>
+            </div>
+            
+            <button type="submit" class="btn-primary">Generate Insight</button>
+        </form>
+    </div>
+
+    <!-- Insight Types Overview -->
+    <div class="insight-types">
+        <div class="type-card" onclick="selectType('product_recommendation')">
+            <h3>🛍️ Product Recommendations</h3>
+            <p>Personalized product suggestions based on user behavior and preferences</p>
+        </div>
+        <div class="type-card" onclick="selectType('user_behavior')">
+            <h3>👤 User Behavior</h3>
+            <p>Analysis of user interaction patterns and shopping habits</p>
+        </div>
+        <div class="type-card" onclick="selectType('sales_trend')">
+            <h3>📈 Sales Trends</h3>
+            <p>Insights into sales patterns and market trends</p>
+        </div>
+        <div class="type-card" onclick="selectType('inventory_optimization')">
+            <h3>📦 Inventory</h3>
+            <p>Recommendations for inventory management and optimization</p>
+        </div>
+        <div class="type-card" onclick="selectType('customer_segmentation')">
+            <h3>🎯 Segmentation</h3>
+            <p>Customer grouping and targeting strategies</p>
+        </div>
+        <div class="type-card" onclick="selectType('price_optimization')">
+            <h3>💰 Pricing</h3>
+            <p>Dynamic pricing recommendations and strategies</p>
+        </div>
+    </div>
+
+    <!-- Generated Insights -->
+    <div th:if="${insights != null and !insights.empty}">
+        <h2>Generated Insights</h2>
+        <div th:each="insight : ${insights}" class="insight-card">
+            <div class="insight-header">
+                <span class="insight-type" th:text="${insight.insightType}">product_recommendation</span>
+                <span class="insight-confidence" th:text="'Confidence: ' + ${#numbers.formatDecimal(insight.confidence * 100, 1, 1)} + '%'">Confidence: 85%</span>
+            </div>
+            
+            <div class="insight-title" th:text="${insight.title}">Personalized Product Recommendations</div>
+            <div class="insight-description" th:text="${insight.description}">AI-generated insight based on your shopping behavior and preferences</div>
+            
+            <div th:if="${insight.recommendation != null}" class="insight-recommendation">
+                <strong>Recommendation:</strong>
+                <p th:text="${insight.recommendation}">Consider these products based on your preferences and browsing history</p>
+            </div>
+            
+            <div class="insight-metadata">
+                <div>
+                    <div th:if="${insight.tags != null and !insight.tags.empty}" class="insight-tags">
+                        <span th:each="tag : ${insight.tags}" class="tag" th:text="${tag}">recommendation</span>
+                    </div>
+                </div>
+                <div>
+                    <small th:text="'Created: ' + ${#temporals.format(insight.createdAt, 'dd/MM/yyyy HH:mm')}">Created: 21/09/2025 10:22</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${insights == null or insights.empty}" class="empty-state">
+        <h2>No insights generated yet</h2>
+        <p>Generate your first AI insight using the form above to get personalized recommendations and analysis.</p>
+    </div>
+
+    <div th:if="${loading}" class="loading">
+        <h3>Generating AI insight...</h3>
+        <p>This may take a few moments while our AI analyzes your data.</p>
+    </div>
+</main>
+
+<script>
+function selectType(type) {
+    document.getElementById('insightType').value = type;
+    
+    // Update visual selection
+    document.querySelectorAll('.type-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    event.currentTarget.classList.add('selected');
+}
+
+// Form submission with loading state
+document.getElementById('insightForm').addEventListener('submit', function() {
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'loading';
+    loadingDiv.innerHTML = '<h3>Generating AI insight...</h3><p>This may take a few moments while our AI analyzes your data.</p>';
+    this.parentNode.insertBefore(loadingDiv, this);
+});
+</script>
+</body>
+</html>

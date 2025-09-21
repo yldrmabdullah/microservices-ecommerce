@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>AI Insight Types - E-commerce Platform</title>
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2/css/pico.min.css"/>
+    <style>
+        .types-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .type-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+        .type-card { background: white; border: 1px solid #e9ecef; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer; }
+        .type-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .type-icon { font-size: 3em; margin-bottom: 1rem; text-align: center; }
+        .type-title { font-size: 1.5em; font-weight: bold; color: #2c3e50; margin-bottom: 1rem; text-align: center; }
+        .type-description { color: #6c757d; line-height: 1.6; margin-bottom: 1.5rem; }
+        .type-features { list-style: none; padding: 0; margin-bottom: 1.5rem; }
+        .type-features li { padding: 0.5rem 0; border-bottom: 1px solid #f8f9fa; }
+        .type-features li:before { content: "✓ "; color: #28a745; font-weight: bold; }
+        .type-features li:last-child { border-bottom: none; }
+        .type-cta { text-align: center; }
+        .btn-primary { background: #007bff; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; text-decoration: none; display: inline-block; }
+        .btn-primary:hover { background: #0056b3; }
+        .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .hero-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 12px; margin-bottom: 3rem; text-align: center; }
+        .hero-title { font-size: 2.5em; font-weight: bold; margin-bottom: 1rem; }
+        .hero-description { font-size: 1.2em; opacity: 0.9; margin-bottom: 2rem; }
+        .use-cases { background: #f8f9fa; padding: 2rem; border-radius: 12px; margin: 3rem 0; }
+        .use-cases h3 { color: #2c3e50; margin-bottom: 1.5rem; }
+        .use-case-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .use-case { background: white; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #007bff; }
+        .use-case h4 { color: #007bff; margin-bottom: 0.5rem; }
+        .use-case p { color: #6c757d; margin: 0; }
+    </style>
+</head>
+<body>
+<main class="container">
+    <nav class="nav">
+        <h1>🤖 AI Insight Types</h1>
+        <div>
+            <a href="/insights" class="btn-primary">Generate Insight</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-title">AI-Powered Business Intelligence</div>
+        <div class="hero-description">
+            Discover the power of artificial intelligence in e-commerce with our comprehensive insight types. 
+            Each insight type is designed to provide specific value to different aspects of your business.
+        </div>
+    </div>
+
+    <!-- Insight Types Grid -->
+    <div class="type-grid">
+        <!-- Product Recommendation -->
+        <div class="type-card" onclick="generateInsight('product_recommendation')">
+            <div class="type-icon">🛍️</div>
+            <div class="type-title">Product Recommendations</div>
+            <div class="type-description">
+                Generate personalized product recommendations based on user behavior, purchase history, 
+                and preferences to increase conversion rates and customer satisfaction.
+            </div>
+            <ul class="type-features">
+                <li>Personalized product suggestions</li>
+                <li>Behavior-based recommendations</li>
+                <li>Cross-selling opportunities</li>
+                <li>Seasonal trend analysis</li>
+                <li>Price sensitivity insights</li>
+            </ul>
+            <div class="type-cta">
+                <button class="btn-primary">Generate Product Insights</button>
+            </div>
+        </div>
+
+        <!-- User Behavior Analysis -->
+        <div class="type-card" onclick="generateInsight('user_behavior')">
+            <div class="type-icon">👤</div>
+            <div class="type-title">User Behavior Analysis</div>
+            <div class="type-description">
+                Analyze user interaction patterns, browsing behavior, and engagement metrics to 
+                understand customer preferences and optimize user experience.
+            </div>
+            <ul class="type-features">
+                <li>Browsing pattern analysis</li>
+                <li>Engagement metrics tracking</li>
+                <li>Session duration insights</li>
+                <li>Page interaction analysis</li>
+                <li>Conversion funnel optimization</li>
+            </ul>
+            <div class="type-cta">
+                <button class="btn-primary">Analyze User Behavior</button>
+            </div>
+        </div>
+
+        <!-- Sales Trend Analysis -->
+        <div class="type-card" onclick="generateInsight('sales_trend')">
+            <div class="type-icon">📈</div>
+            <div class="type-title">Sales Trend Analysis</div>
+            <div class="type-description">
+                Identify sales patterns, seasonal trends, and market opportunities to make 
+                data-driven decisions and optimize revenue strategies.
+            </div>
+            <ul class="type-features">
+                <li>Sales pattern recognition</li>
+                <li>Seasonal trend analysis</li>
+                <li>Market opportunity identification</li>
+                <li>Revenue forecasting</li>
+                <li>Performance benchmarking</li>
+            </ul>
+            <div class="type-cta">
+                <button class="btn-primary">Analyze Sales Trends</button>
+            </div>
+        </div>
+
+        <!-- Inventory Optimization -->
+        <div class="type-card" onclick="generateInsight('inventory_optimization')">
+            <div class="type-icon">📦</div>
+            <div class="type-title">Inventory Optimization</div>
+            <div class="type-description">
+                Optimize inventory levels, predict demand, and reduce stockouts or overstock 
+                situations to improve operational efficiency and customer satisfaction.
+            </div>
+            <ul class="type-features">
+                <li>Demand forecasting</li>
+                <li>Stock level optimization</li>
+                <li>Reorder point suggestions</li>
+                <li>Dead stock identification</li>
+                <li>Supplier performance analysis</li>
+            </ul>
+            <div class="type-cta">
+                <button class="btn-primary">Optimize Inventory</button>
+            </div>
+        </div>
+
+        <!-- Customer Segmentation -->
+        <div class="type-card" onclick="generateInsight('customer_segmentation')">
+            <div class="type-icon">🎯</div>
+            <div class="type-title">Customer Segmentation</div>
+            <div class="type-description">
+                Segment customers based on behavior, preferences, and value to create 
+                targeted marketing campaigns and personalized experiences.
+            </div>
+            <ul class="type-features">
+                <li>Behavioral segmentation</li>
+                <li>Value-based grouping</li>
+                <li>Lifetime value analysis</li>
+                <li>Churn prediction</li>
+                <li>Targeting strategies</li>
+            </ul>
+            <div class="type-cta">
+                <button class="btn-primary">Segment Customers</button>
+            </div>
+        </div>
+
+        <!-- Price Optimization -->
+        <div class="type-card" onclick="generateInsight('price_optimization')">
+            <div class="type-icon">💰</div>
+            <div class="type-title">Price Optimization</div>
+            <div class="type-description">
+                Optimize pricing strategies based on market conditions, competitor analysis, 
+                and customer price sensitivity to maximize revenue and profitability.
+            </div>
+            <ul class="type-features">
+                <li>Dynamic pricing strategies</li>
+                <li>Competitor price analysis</li>
+                <li>Price elasticity insights</li>
+                <li>Promotion optimization</li>
+                <li>Revenue maximization</li>
+            </ul>
+            <div class="type-cta">
+                <button class="btn-primary">Optimize Pricing</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Use Cases Section -->
+    <div class="use-cases">
+        <h3>Common Use Cases</h3>
+        <div class="use-case-grid">
+            <div class="use-case">
+                <h4>E-commerce Managers</h4>
+                <p>Use product recommendations and sales trends to optimize product catalog and pricing strategies.</p>
+            </div>
+            <div class="use-case">
+                <h4>Marketing Teams</h4>
+                <p>Leverage customer segmentation and user behavior insights for targeted campaigns and personalization.</p>
+            </div>
+            <div class="use-case">
+                <h4>Operations Teams</h4>
+                <p>Utilize inventory optimization insights to reduce costs and improve supply chain efficiency.</p>
+            </div>
+            <div class="use-case">
+                <h4>Data Analysts</h4>
+                <p>Access comprehensive analytics and trend analysis for strategic business decisions.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+function generateInsight(type) {
+    // Redirect to insights page with pre-selected type
+    window.location.href = '/insights?type=' + type;
+}
+</script>
+</body>
+</html>

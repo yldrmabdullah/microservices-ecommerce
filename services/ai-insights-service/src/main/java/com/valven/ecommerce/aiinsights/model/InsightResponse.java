@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +23,7 @@ public class InsightResponse {
     private Map<String, Object> metadata;
     private List<String> tags;
     private Double confidence;
-    private LocalDateTime createdAt;
-    private LocalDateTime expiresAt;
+    private Instant createdAt;
+    private Instant expiresAt;
     private String status;
 }

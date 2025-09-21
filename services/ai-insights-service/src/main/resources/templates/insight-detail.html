@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${insight != null ? insight.title + ' - AI Insights' : 'Insight Details - AI Insights'}">Insight Details - AI Insights</title>
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2/css/pico.min.css"/>
+    <style>
+        .insight-detail { max-width: 800px; margin: 0 auto; padding: 2rem; }
+        .insight-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
+        .insight-type { background: rgba(255,255,255,0.2); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9em; font-weight: bold; display: inline-block; margin-bottom: 1rem; }
+        .insight-title { font-size: 2em; font-weight: bold; margin-bottom: 0.5rem; }
+        .insight-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; opacity: 0.9; }
+        .confidence-badge { background: #28a745; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold; }
+        .insight-content { background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .insight-description { font-size: 1.1em; line-height: 1.6; color: #495057; margin-bottom: 2rem; }
+        .recommendation-section { background: #e8f5e8; border-left: 4px solid #28a745; padding: 1.5rem; border-radius: 8px; margin: 2rem 0; }
+        .recommendation-title { font-weight: bold; color: #2e7d32; margin-bottom: 1rem; font-size: 1.2em; }
+        .recommendation-content { color: #495057; line-height: 1.6; }
+        .metadata-section { background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 2rem 0; }
+        .metadata-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .metadata-item { display: flex; flex-direction: column; }
+        .metadata-label { font-weight: bold; color: #6c757d; font-size: 0.9em; margin-bottom: 0.25rem; }
+        .metadata-value { color: #495057; }
+        .tags-section { margin: 2rem 0; }
+        .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .tag { background: #007bff; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9em; }
+        .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .btn-primary { background: #007bff; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; text-decoration: none; display: inline-block; }
+        .btn-primary:hover { background: #0056b3; }
+        .btn-secondary { background: #6c757d; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; text-decoration: none; display: inline-block; }
+        .btn-secondary:hover { background: #545b62; }
+        .status-badge { padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold; font-size: 0.9em; }
+        .status-active { background: #d4edda; color: #155724; }
+        .status-expired { background: #f8d7da; color: #721c24; }
+        .error { background: #ffebee; color: #c62828; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; }
+        .actions { display: flex; gap: 1rem; margin-top: 2rem; }
+        .chart-container { background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 2rem 0; text-align: center; color: #6c757d; }
+    </style>
+</head>
+<body>
+<main class="container">
+    <nav class="nav">
+        <h1>🤖 AI Insight Details</h1>
+        <div>
+            <a href="/insights" class="btn-secondary">← Back to Insights</a>
+        </div>
+    </nav>
+
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+
+    <div th:if="${insight != null}" class="insight-detail">
+        <!-- Insight Header -->
+        <div class="insight-header">
+            <div class="insight-type" th:text="${insight.insightType}">product_recommendation</div>
+            <div class="insight-title" th:text="${insight.title}">Personalized Product Recommendations</div>
+            <div class="insight-meta">
+                <div>
+                    <div th:text="'User ID: ' + ${insight.userId}">User ID: user123</div>
+                    <div th:text="'Generated: ' + ${#temporals.format(insight.createdAt, 'dd/MM/yyyy HH:mm')}">Generated: 21/09/2025 10:22</div>
+                </div>
+                <div class="confidence-badge" th:text="'Confidence: ' + ${#numbers.formatDecimal(insight.confidence * 100, 1, 1)} + '%'">Confidence: 85%</div>
+            </div>
+        </div>
+
+        <!-- Insight Content -->
+        <div class="insight-content">
+            <div class="insight-description" th:text="${insight.description}">
+                This AI-generated insight provides personalized product recommendations based on your shopping behavior, 
+                preferences, and browsing history. Our machine learning algorithms have analyzed your interaction patterns 
+                to suggest products that match your interests and needs.
+            </div>
+
+            <!-- Recommendation Section -->
+            <div th:if="${insight.recommendation != null}" class="recommendation-section">
+                <div class="recommendation-title">💡 AI Recommendation</div>
+                <div class="recommendation-content" th:text="${insight.recommendation}">
+                    Based on your shopping patterns and preferences, we recommend exploring these product categories: 
+                    Electronics, Home & Garden, and Sports & Outdoors. These categories show high engagement potential 
+                    based on your previous purchases and browsing behavior.
+                </div>
+            </div>
+
+            <!-- Metadata Section -->
+            <div class="metadata-section">
+                <h3>Insight Metadata</h3>
+                <div class="metadata-grid">
+                    <div class="metadata-item">
+                        <div class="metadata-label">Insight ID</div>
+                        <div class="metadata-value" th:text="${insight.id}">insight-uuid-123</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Status</div>
+                        <div class="metadata-value">
+                            <span th:class="'status-badge status-' + ${insight.status?.toLowerCase()}" th:text="${insight.status}">ACTIVE</span>
+                        </div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Context</div>
+                        <div class="metadata-value" th:text="${insight.context != null ? insight.context : 'N/A'}">shopping_session</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Expires At</div>
+                        <div class="metadata-value" th:text="${insight.expiresAt != null ? #temporals.format(insight.expiresAt, 'dd/MM/yyyy HH:mm') : 'Never'}">28/09/2025 10:22</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tags Section -->
+            <div th:if="${insight.tags != null and !insight.tags.empty}" class="tags-section">
+                <h3>Tags</h3>
+                <div class="tags">
+                    <span th:each="tag : ${insight.tags}" class="tag" th:text="${tag}">recommendation</span>
+                </div>
+            </div>
+
+            <!-- Chart Placeholder -->
+            <div class="chart-container">
+                <h3>📊 Insight Visualization</h3>
+                <p>Interactive charts and visualizations would be displayed here based on the insight type and data.</p>
+                <div th:if="${insight.insightType == 'product_recommendation'}">
+                    <p>📈 Product recommendation confidence scores and category preferences</p>
+                </div>
+                <div th:if="${insight.insightType == 'user_behavior'}">
+                    <p>👤 User behavior patterns and engagement metrics</p>
+                </div>
+                <div th:if="${insight.insightType == 'sales_trend'}">
+                    <p>📊 Sales trend analysis and market insights</p>
+                </div>
+                <div th:if="${insight.insightType == 'inventory_optimization'}">
+                    <p>📦 Inventory levels and optimization recommendations</p>
+                </div>
+                <div th:if="${insight.insightType == 'customer_segmentation'}">
+                    <p>🎯 Customer segments and targeting strategies</p>
+                </div>
+                <div th:if="${insight.insightType == 'price_optimization'}">
+                    <p>💰 Price sensitivity analysis and optimization suggestions</p>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions">
+                <a href="/insights" class="btn-primary">Generate New Insight</a>
+                <a href="/" class="btn-secondary">Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${insight == null}">
+        <div class="error">
+            <h2>Insight Not Found</h2>
+            <p>The requested insight could not be found or may have expired.</p>
+            <a href="/insights" class="btn-primary">View All Insights</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>
