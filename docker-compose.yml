@@ -129,6 +129,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - ./database-migrations/001-create-userdb-schema.sql:/docker-entrypoint-initdb.d/001-create-userdb-schema.sql
+      - ./database-migrations/002-create-productdb-schema.sql:/docker-entrypoint-initdb.d/002-create-productdb-schema.sql
+      - ./database-migrations/003-create-orderdb-schema.sql:/docker-entrypoint-initdb.d/003-create-orderdb-schema.sql
     ports:
       - "5432:5432"
     networks:

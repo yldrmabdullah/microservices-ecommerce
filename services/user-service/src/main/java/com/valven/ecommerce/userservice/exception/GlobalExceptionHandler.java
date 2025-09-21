@@ -1,6 +1,6 @@
-package com.valven.ecommerce.orderservice.exception;
+package com.valven.ecommerce.userservice.exception;
 
-import com.valven.ecommerce.orderservice.dto.ApiResponse;
+import com.valven.ecommerce.userservice.dto.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

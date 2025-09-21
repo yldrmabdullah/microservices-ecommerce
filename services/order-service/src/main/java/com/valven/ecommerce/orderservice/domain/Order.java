@@ -10,6 +10,7 @@ import lombok.Builder;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "orders", indexes = {
@@ -26,9 +27,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @NotBlank(message = "User ID is required")
+    @NotNull(message = "User ID is required")
     @Column(nullable = false)
-    private String userId;
+    private UUID userId;
     
     @Column(name = "created_at", nullable = false, updatable = false)
     @Builder.Default

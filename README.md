@@ -1,38 +1,22 @@
-﻿# E-commerce Microservices Platform
+﻿# Valven E-commerce Microservices Platform
 
-Professional microservices architecture for e-commerce platform with advanced features including service discovery, centralized configuration, caching, monitoring, and security.
+A comprehensive microservices-based e-commerce platform built with modern Java technologies, featuring service discovery, centralized configuration, distributed caching, monitoring, and security.
 
 ## Architecture Overview
 
-This platform implements a comprehensive microservices architecture following industry best practices:
+This platform implements a robust microservices architecture following industry best practices:
 
 - **Service Discovery**: Eureka Server for dynamic service registration and discovery
 - **API Gateway**: Spring Cloud Gateway with rate limiting, authentication, and circuit breaker
 - **Centralized Configuration**: Spring Cloud Config Server for configuration management
-- **Caching**: Redis for distributed caching across services
-- **Monitoring**: Micrometer, Prometheus, and Zipkin for observability
-- **Security**: JWT authentication with rate limiting and request filtering
-- **Resilience**: Circuit breaker pattern and retry mechanisms
-
-## Services
-
-### Core Services
-- **Eureka Server** (Port 8761): Service discovery and registration
-- **Config Server** (Port 8888): Centralized configuration management
-- **User Service** (Port 8083): User authentication, registration, and profile management
-- **Product Service** (Port 8081): Product catalog, search, and inventory management
-- **Order Service** (Port 8082): Shopping cart and order processing
-- **API Gateway** (Port 8080): Edge service with routing, security, and rate limiting
-- **UI Application** (Port 8085): Thymeleaf-based web interface
-
-### Infrastructure Services
-- **Redis** (Port 6379): Distributed caching and rate limiting
-- **PostgreSQL** (Port 5432): Primary database for production
-- **Zipkin** (Port 9411): Distributed tracing
+- **Distributed Caching**: Redis for high-performance caching across services
+- **Monitoring & Observability**: Micrometer, Prometheus, Zipkin, and Grafana integration
+- **Security**: JWT authentication with rate limiting and comprehensive input validation
+- **Resilience**: Circuit breaker pattern, retry mechanisms, and fallback strategies
 
 ## Technology Stack
 
-### Backend
+### Backend Technologies
 - **Java 21** with Spring Boot 3.3.5
 - **Spring Cloud Gateway** for API gateway functionality
 - **Spring Cloud Netflix Eureka** for service discovery
@@ -40,23 +24,63 @@ This platform implements a comprehensive microservices architecture following in
 - **Spring Data JPA** with H2 (development) and PostgreSQL (production)
 - **Spring Security** with JWT authentication
 - **Spring Cache** with Redis integration
+- **Spring WebFlux** for reactive programming
+
+### Database & Caching
+- **PostgreSQL 15** for production data persistence
+- **H2 Database** for development and testing
+- **Redis 7** for distributed caching and rate limiting
+- **JPA/Hibernate** for ORM mapping
 
 ### Monitoring & Observability
-- **Micrometer** for application metrics
-- **Prometheus** for metrics collection and storage
+- **Micrometer** for application metrics collection
+- **Prometheus** for metrics storage and querying
 - **Zipkin** for distributed tracing
+- **Grafana** for visualization and dashboards
 - **Spring Boot Actuator** for health checks and monitoring
 
-### Caching & Performance
-- **Redis** for distributed caching
-- **Spring Cache** annotations for transparent caching
-- **Rate Limiting** with Redis-based token bucket algorithm
-
-### Security
+### Security & Validation
 - **JWT (JSON Web Tokens)** for stateless authentication
-- **Rate Limiting** per user and IP address
+- **BCrypt** for password hashing
+- **Bean Validation** for input validation
+- **Rate Limiting** with Redis-based token bucket algorithm
 - **CORS** configuration for cross-origin requests
-- **Request filtering** and validation
+
+### Development & Testing
+- **Maven** for dependency management and build automation
+- **JUnit 5** for unit testing
+- **MockMvc** for integration testing
+- **Testcontainers** for integration test environments
+- **Lombok** for reducing boilerplate code
+
+### Documentation & API
+- **OpenAPI 3.0** (Swagger) for API documentation
+- **SpringDoc** for automatic API documentation generation
+- **RESTful API** design principles
+
+### Containerization & Orchestration
+- **Docker** for containerization
+- **Docker Compose** for local development orchestration
+- **Kubernetes** manifests for production deployment
+- **Multi-stage Docker builds** for optimized images
+
+## Services Architecture
+
+### Core Business Services
+- **User Service** (Port 8083): User authentication, registration, and profile management
+- **Product Service** (Port 8081): Product catalog, search, inventory management, and stock tracking
+- **Order Service** (Port 8082): Shopping cart management and order processing
+
+### Infrastructure Services
+- **Eureka Server** (Port 8761): Service discovery and registration
+- **Config Server** (Port 8888): Centralized configuration management
+- **API Gateway** (Port 8080): Edge service with routing, security, and rate limiting
+- **UI Application** (Port 8085): Thymeleaf-based web interface
+
+### Supporting Services
+- **Redis** (Port 6379): Distributed caching and rate limiting
+- **PostgreSQL** (Port 5432): Primary database for production
+- **Zipkin** (Port 9411): Distributed tracing
 
 ## Repository Structure
 
@@ -70,6 +94,11 @@ valven/
 │   └── order-service/          # Shopping cart and orders
 ├── gateway/                    # API Gateway with security and routing
 ├── ui/                        # Web user interface
+├── database-migrations/        # Database schema migrations
+├── monitoring/                 # Monitoring configurations
+├── security-audit/            # Security audit tools
+├── performance-tests/         # Load testing and performance tests
+├── k8s/                       # Kubernetes deployment manifests
 ├── docker-compose.yml         # Multi-container orchestration
 ├── pom.xml                    # Parent Maven configuration
 └── README.md                  # This file
@@ -82,6 +111,7 @@ valven/
 - Maven 3.8+
 - Docker & Docker Compose (optional)
 - Redis (for production features)
+- PostgreSQL 15+ (for production)
 
 ### Security Configuration
 Before running the application, set the following environment variables:
@@ -160,6 +190,12 @@ docker-compose down
 - **Eureka Dashboard**: http://localhost:8761
 - **Config Server**: http://localhost:8888
 
+### API Documentation
+- **User Service API**: http://localhost:8083/swagger-ui.html
+- **Product Service API**: http://localhost:8081/swagger-ui.html
+- **Order Service API**: http://localhost:8082/swagger-ui.html
+- **Gateway API**: http://localhost:8080/swagger-ui.html
+
 ### Service URLs
 - **User Service**: http://localhost:8083
 - **Product Service**: http://localhost:8081
@@ -178,6 +214,7 @@ docker-compose down
 - ✓ Shopping cart management
 - ✓ Order processing and history
 - ✓ Inventory management with stock tracking
+- ✓ Real-time stock updates
 
 ### Microservices Features
 - ✓ Service discovery with Eureka
@@ -186,6 +223,7 @@ docker-compose down
 - ✓ Distributed caching with Redis
 - ✓ Circuit breaker pattern for resilience
 - ✓ Rate limiting for API protection
+- ✓ Distributed tracing with Zipkin
 
 ### Monitoring & Observability
 - ✓ Health checks and metrics collection
@@ -193,13 +231,23 @@ docker-compose down
 - ✓ Prometheus metrics integration
 - ✓ Request/response logging
 - ✓ Performance monitoring
+- ✓ Custom business metrics
 
 ### Security Features
 - ✓ JWT-based authentication
 - ✓ Rate limiting per user and IP
 - ✓ CORS configuration
-- ✓ Request validation and filtering
+- ✓ Input validation and sanitization
 - ✓ Secure password encoding
+- ✓ Security headers implementation
+
+### Development Features
+- ✓ Comprehensive API documentation
+- ✓ Structured logging with JSON format
+- ✓ Environment-specific configurations
+- ✓ Unit and integration testing
+- ✓ Database migration support
+- ✓ Docker containerization
 
 ## Configuration
 
@@ -207,6 +255,8 @@ docker-compose down
 - `SPRING_PROFILES_ACTIVE`: Set to `prod` for production mode
 - `SPRING_REDIS_HOST`: Redis server hostname (default: localhost)
 - `EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE`: Eureka server URL
+- `JWT_SECRET`: JWT signing secret key
+- `POSTGRES_PASSWORD`: PostgreSQL password
 
 ### Rate Limiting Configuration
 - **Auth endpoints**: 10 requests/minute per user
@@ -218,6 +268,16 @@ docker-compose down
 - **Product data**: 5 minutes TTL
 - **Order data**: 10 minutes TTL
 
+## Database Schema
+
+The platform uses a microservices database pattern with separate databases for each service:
+
+- **userdb**: User authentication and profile data
+- **productdb**: Product catalog and inventory data
+- **orderdb**: Shopping cart and order data
+
+Each database includes proper indexing, constraints, and migration scripts for schema management.
+
 ## Development Guidelines
 
 ### Code Quality
@@ -226,6 +286,7 @@ docker-compose down
 - Implement proper error handling
 - Add comprehensive logging
 - Write unit tests for critical functionality
+- Use structured logging with JSON format
 
 ### Microservices Best Practices
 - Each service has a single responsibility
@@ -233,6 +294,14 @@ docker-compose down
 - Database per service pattern
 - Stateless service design
 - Proper error handling and fallback mechanisms
+- Circuit breaker implementation
+
+### Testing Strategy
+- Unit tests for business logic
+- Integration tests for API endpoints
+- End-to-end tests for critical user flows
+- Performance tests for scalability validation
+- Security tests for vulnerability assessment
 
 ## Troubleshooting
 
@@ -241,11 +310,13 @@ docker-compose down
 2. **Redis connection**: Verify Redis is running and accessible
 3. **Service discovery**: Check Eureka server is running first
 4. **Database issues**: Verify database connections and schemas
+5. **JWT token issues**: Check JWT secret configuration
 
 ### Logs
 - Check individual service logs for detailed error information
 - Use Zipkin for tracing request flows
 - Monitor Prometheus metrics for performance issues
+- Review structured logs in JSON format
 
 ## Contributing
 
@@ -254,3 +325,12 @@ docker-compose down
 3. Update documentation for any API changes
 4. Ensure all services start successfully
 5. Verify integration tests pass
+6. Update API documentation
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For support and questions, please contact the development team at dev@valven.com or create an issue in the project repository.

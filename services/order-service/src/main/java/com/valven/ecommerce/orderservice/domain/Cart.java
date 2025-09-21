@@ -9,6 +9,7 @@ import lombok.Builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "carts", indexes = {
@@ -23,9 +24,9 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @NotBlank(message = "User ID is required")
+    @NotNull(message = "User ID is required")
     @Column(nullable = false)
-    private String userId;
+    private UUID userId;
 
     @ElementCollection
     @CollectionTable(name = "cart_items", joinColumns = @JoinColumn(name = "cart_id"))
