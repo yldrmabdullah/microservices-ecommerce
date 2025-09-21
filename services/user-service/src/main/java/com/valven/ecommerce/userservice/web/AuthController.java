@@ -49,7 +49,6 @@ public class AuthController {
     @GetMapping("/validate")
     public ResponseEntity<ApiResponse<Boolean>> validateToken(@RequestHeader("Authorization") String token) {
         try {
-            // Remove "Bearer " prefix if present
             if (token.startsWith("Bearer ")) {
                 token = token.substring(7);
             }
@@ -66,7 +65,6 @@ public class AuthController {
     @GetMapping("/user")
     public ResponseEntity<ApiResponse<UserResponse>> getUserInfo(@RequestHeader("Authorization") String token) {
         try {
-            // Remove "Bearer " prefix if present
             if (token.startsWith("Bearer ")) {
                 token = token.substring(7);
             }

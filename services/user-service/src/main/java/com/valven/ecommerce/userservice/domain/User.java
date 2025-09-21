@@ -34,7 +34,7 @@ public class User {
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters")
     @Column(nullable = false)
-    private String password; // This will be hashed
+    private String password;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -53,7 +53,6 @@ public class User {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Business logic methods
     public void updateLastLogin() {
         this.lastLogin = LocalDateTime.now();
     }

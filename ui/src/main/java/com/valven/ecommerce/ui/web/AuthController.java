@@ -23,7 +23,7 @@ public class AuthController {
 
     public AuthController() {
         this.userClient = WebClient.builder()
-                .baseUrl("http://localhost:8080/api/auth") // Gateway üzerinden
+                .baseUrl("http://localhost:8080/api/auth")
                 .build();
     }
 
@@ -80,7 +80,6 @@ public class AuthController {
                 String name = dataNode.get("name").asText();
                 String userId = dataNode.get("userId").asText();
 
-                // Store user info in session
                 session.setAttribute("token", token);
                 session.setAttribute("userId", userId);
                 session.setAttribute("userName", name);
@@ -110,7 +109,6 @@ public class AuthController {
         try {
             log.info("Signup attempt for email: {}", email);
 
-            // Validate password confirmation
             if (!password.equals(confirmPassword)) {
                 return "redirect:/auth/signup?error=Passwords do not match";
             }
@@ -135,7 +133,6 @@ public class AuthController {
                 String token = dataNode.get("token").asText();
                 String userId = dataNode.get("userId").asText();
 
-                // Store user info in session
                 session.setAttribute("token", token);
                 session.setAttribute("userId", userId);
                 session.setAttribute("userName", name);

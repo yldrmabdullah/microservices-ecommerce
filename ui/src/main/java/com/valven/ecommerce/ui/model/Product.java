@@ -1,6 +1,5 @@
 package com.valven.ecommerce.ui.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,7 +15,6 @@ public class Product {
     private String category;
     private String imageUrl;
 
-    // Business logic methods
     public boolean isInStock() {
         return stock != null && stock > 0;
     }

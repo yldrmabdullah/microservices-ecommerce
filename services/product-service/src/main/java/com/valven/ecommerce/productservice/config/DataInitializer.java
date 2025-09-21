@@ -21,7 +21,6 @@ public class DataInitializer implements CommandLineRunner {
         if (productRepository.count() == 0) {
             log.info("Initializing sample product data...");
             
-            // Electronics
             createProduct("LAP001", "MacBook Pro 16-inch", 
                 "Apple MacBook Pro with M2 chip, 16GB RAM, 512GB SSD", 
                 new BigDecimal("2499.99"), 10, "Electronics", 
@@ -42,7 +41,6 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("599.99"), 8, "Electronics", 
                 "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500");
             
-            // Clothing
             createProduct("TSH001", "Cotton T-Shirt", 
                 "100% cotton comfortable t-shirt in various colors", 
                 new BigDecimal("29.99"), 50, "Clothing", 
@@ -53,7 +51,6 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("89.99"), 20, "Clothing", 
                 "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=500");
             
-            // Books
             createProduct("BOK001", "Clean Code", 
                 "A Handbook of Agile Software Craftsmanship by Robert C. Martin", 
                 new BigDecimal("39.99"), 30, "Books", 
@@ -64,7 +61,6 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("49.99"), 12, "Books", 
                 "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500");
             
-            // Home & Garden
             createProduct("HOM001", "Coffee Maker", 
                 "Programmable drip coffee maker with 12-cup capacity", 
                 new BigDecimal("79.99"), 5, "Home & Garden", 
@@ -75,7 +71,6 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("34.99"), 18, "Home & Garden", 
                 "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=500");
             
-            // Sports
             createProduct("SPT001", "Yoga Mat", 
                 "Non-slip yoga mat with carrying strap", 
                 new BigDecimal("24.99"), 25, "Sports", 

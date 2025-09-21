@@ -29,18 +29,15 @@ public class CartOrderController {
             return c;
         });
         
-        // Check if item already exists in cart
         boolean itemExists = false;
         for (CartItem existingItem : cart.getItems()) {
             if (existingItem.getProductId().equals(item.getProductId())) {
-                // Update quantity
                 existingItem.setQuantity(existingItem.getQuantity() + item.getQuantity());
                 itemExists = true;
                 break;
             }
         }
         
-        // If item doesn't exist, add it
         if (!itemExists) {
             cart.getItems().add(item);
         }

@@ -63,7 +63,6 @@ public class Product {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Business logic methods
     public boolean isInStock() {
         return stock != null && stock > 0;
     }
