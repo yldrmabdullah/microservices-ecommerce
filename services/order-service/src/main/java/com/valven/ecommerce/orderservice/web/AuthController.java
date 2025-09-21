@@ -24,29 +24,25 @@ public class AuthController {
         try {
             log.info("Signup attempt for email: {}", request.getEmail());
 
-            // Validate password confirmation
             if (!request.getPassword().equals(request.getConfirmPassword())) {
                 return ResponseEntity.badRequest()
                         .body(ApiResponse.error("Passwords do not match", "PASSWORD_MISMATCH"));
             }
 
-            // Check if user already exists
             if (userRepository.existsByEmail(request.getEmail())) {
                 return ResponseEntity.badRequest()
                         .body(ApiResponse.error("User already exists with this email", "USER_EXISTS"));
             }
 
-            // Create new user
             User user = new User();
             user.setName(request.getName());
             user.setEmail(request.getEmail());
-            user.setPassword(request.getPassword()); // In real app, hash this password
+            user.setPassword(request.getPassword());
             user.setIsActive(true);
             user.setCreatedAt(LocalDateTime.now());
 
             User savedUser = userRepository.save(user);
 
-            // Generate simple token (in real app, use JWT)
             String token = UUID.randomUUID().toString();
 
             AuthResponse authResponse = new AuthResponse();
@@ -78,17 +74,14 @@ public class AuthController {
                         .body(ApiResponse.error("Invalid credentials", "INVALID_CREDENTIALS"));
             }
 
-            // Simple password check (in real app, use proper password hashing)
             if (!user.getPassword().equals(request.getPassword())) {
                 return ResponseEntity.badRequest()
                         .body(ApiResponse.error("Invalid credentials", "INVALID_CREDENTIALS"));
             }
 
-            // Update last login
             user.setLastLogin(LocalDateTime.now());
             userRepository.save(user);
 
-            // Generate simple token (in real app, use JWT)
             String token = UUID.randomUUID().toString();
 
             AuthResponse authResponse = new AuthResponse();

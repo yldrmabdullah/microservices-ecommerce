@@ -10,26 +10,21 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     
-    // Search methods
     List<Product> findByNameContainingIgnoreCase(String name);
     List<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description);
     List<Product> findByCategoryIgnoreCase(String category);
     
-    // SKU methods
     Optional<Product> findBySku(String sku);
     boolean existsBySku(String sku);
     
-    // Stock methods
     List<Product> findByStockLessThan(Integer stock);
     List<Product> findByStockGreaterThan(Integer stock);
     List<Product> findByStockBetween(Integer minStock, Integer maxStock);
     
-    // Price methods
     List<Product> findByPriceBetween(java.math.BigDecimal minPrice, java.math.BigDecimal maxPrice);
     List<Product> findByPriceLessThan(java.math.BigDecimal price);
     List<Product> findByPriceGreaterThan(java.math.BigDecimal price);
     
-    // Custom queries
     @Query("SELECT p FROM Product p WHERE p.stock = 0")
     List<Product> findOutOfStockProducts();
     

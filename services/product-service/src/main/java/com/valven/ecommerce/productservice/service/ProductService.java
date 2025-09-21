@@ -1,7 +1,6 @@
 package com.valven.ecommerce.productservice.service;
 
 import com.valven.ecommerce.productservice.domain.Product;
-import com.valven.ecommerce.productservice.dto.ApiResponse;
 import com.valven.ecommerce.productservice.exception.InsufficientStockException;
 import com.valven.ecommerce.productservice.exception.ProductNotFoundException;
 import com.valven.ecommerce.productservice.repository.ProductRepository;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +48,6 @@ public class ProductService {
     public Product createProduct(Product product) {
         log.info("Creating new product: {}", product.getName());
         
-        // Check if SKU already exists
         if (productRepository.findBySku(product.getSku()).isPresent()) {
             throw new IllegalArgumentException("Product with SKU " + product.getSku() + " already exists");
         }
@@ -66,7 +63,6 @@ public class ProductService {
         
         Product existingProduct = getProductById(id);
         
-        // Check if SKU is being changed and if new SKU already exists
         if (!existingProduct.getSku().equals(updatedProduct.getSku())) {
             if (productRepository.findBySku(updatedProduct.getSku()).isPresent()) {
                 throw new IllegalArgumentException("Product with SKU " + updatedProduct.getSku() + " already exists");

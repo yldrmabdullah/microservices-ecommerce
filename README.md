@@ -1,18 +1,13 @@
-﻿# 🛒 E-commerce Microservices Platform
+﻿# E-commerce Microservices Platform
 
-Bu repository, e-ticaret platformu için minimal microservices mimarisi içerir. Ürün kataloğu, sepet ve sipariş yönetimi, API gateway, Actuator/Prometheus ile izleme ve hafif bir UI gösterir.
+This repository contains a minimal microservices architecture for an e-commerce platform. It includes product catalog, cart and order management, API gateway, monitoring with Actuator/Prometheus, and a lightweight UI.
 
-## 🏗️ Modüller
+## Modules
 
-- `services/product-service`: ürün arama, detaylar, stok yönetimi
-- `services/order-service`: sepet işlemleri, sipariş oluşturma, kullanıcı kimlik doğrulama
-- `gateway`: iç servislere edge routing
-- `ui`: gateway'i kullanan basit Thymeleaf UI
-
-## 🚀 Canlı Demo
-
-- **Railway**: [Deploy Rehberi](RAILWAY_DEPLOYMENT.md)
-- **Render**: [Deploy Rehberi](RENDER_DEPLOYMENT.md)
+- `services/product-service`: product search, details, stock management
+- `services/order-service`: cart operations, order creation, user authentication
+- `gateway`: edge routing to internal services
+- `ui`: simple Thymeleaf UI using the gateway
 
 ## Repository layout
 
@@ -31,7 +26,7 @@ run-all.ps1
 ## Technology
 
 - Java 21, Spring Boot 3, Spring Cloud Gateway
-- Spring Data JPA with in‑memory H2 for persistence
+- Spring Data JPA with in-memory H2 for persistence
 - Spring Security with JWT authentication
 - Actuator + Micrometer Prometheus for metrics
 - Thymeleaf for server-rendered UI
@@ -40,54 +35,54 @@ run-all.ps1
 
 Request flow: browser → `ui` → `gateway` → domain services (`user-service`, `product-service`, `order-service`). Each service has its own database schema (H2). Gateway centralizes routing. User authentication is handled by `user-service` with JWT tokens. Actuator endpoints expose health and metrics.
 
-## 🏃‍♂️ Lokal Çalıştırma
+## Local Development
 
-### Docker ile (Önerilen)
+### Using Docker (Recommended)
 ```bash
 docker-compose up --build
 ```
 
-### Manuel Çalıştırma
+### Manual Setup
 ```bash
-# 1. Tüm servisleri build et
+# 1. Build all services
 mvn -q -DskipTests package
 
-# 2. Servisleri sırayla başlat
+# 2. Start services in order
 mvn -q -pl services/product-service spring-boot:run &
 mvn -q -pl services/order-service spring-boot:run &
 mvn -q -pl gateway spring-boot:run &
 mvn -q -pl ui spring-boot:run &
 ```
 
-### 🌐 Erişim
-- **Ana UI**: http://localhost:8085
+### Access Points
+- **Main UI**: http://localhost:8085
 - **API Gateway**: http://localhost:8080
 - **Product Service**: http://localhost:8081
 - **Order Service**: http://localhost:8082
 
-## 🐳 Docker
+## Docker
 
 ```bash
-# Tüm servisleri başlat
+# Start all services
 docker-compose up --build
 
-# Arka planda çalıştır
+# Run in background
 docker-compose up -d
 
-# Servisleri durdur
+# Stop services
 docker-compose down
 ```
 
-## 📊 Özellikler
+## Features
 
-- ✅ Kullanıcı kayıt/giriş sistemi
-- ✅ Ürün kataloğu ve arama
-- ✅ Sepet yönetimi (ekleme, silme, temizleme)
-- ✅ Stok yönetimi (otomatik azaltma/artırma)
-- ✅ Sipariş oluşturma ve görüntüleme
-- ✅ Microservices mimarisi
-- ✅ API Gateway ile routing
-- ✅ PostgreSQL veritabanı desteği
+- ✅ User registration/login system
+- ✅ Product catalog and search
+- ✅ Cart management (add, remove, clear)
+- ✅ Stock management (automatic reduction/increase)
+- ✅ Order creation and viewing
+- ✅ Microservices architecture
+- ✅ API Gateway routing
+- ✅ PostgreSQL database support
 - ✅ Docker containerization
 
 Health checks: `http://localhost:8083/actuator/health`, `http://localhost:8081/actuator/health`, `http://localhost:8082/actuator/health`, `http://localhost:8080/actuator/health`.

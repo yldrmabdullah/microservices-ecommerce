@@ -26,17 +26,14 @@ public class UserService {
     public AuthResponse signup(SignupRequest request) {
         log.info("Processing signup request for email: {}", request.getEmail());
 
-        // Check if user already exists
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("User with email " + request.getEmail() + " already exists");
         }
 
-        // Validate password confirmation
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new RuntimeException("Passwords do not match");
         }
 
-        // Create new user
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
@@ -46,7 +43,6 @@ public class UserService {
         User savedUser = userRepository.save(user);
         log.info("User created successfully with ID: {}", savedUser.getId());
 
-        // Generate JWT token
         String token = jwtUtil.generateToken(savedUser.getId(), savedUser.getEmail());
 
         return new AuthResponse(
@@ -73,11 +69,9 @@ public class UserService {
             throw new RuntimeException("Invalid email or password");
         }
 
-        // Update last login
         user.updateLastLogin();
         userRepository.save(user);
 
-        // Generate JWT token
         String token = jwtUtil.generateToken(user.getId(), user.getEmail());
 
         log.info("User signed in successfully: {}", user.getEmail());
