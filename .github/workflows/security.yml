@@ -24,7 +24,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Cache Maven dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -37,7 +37,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Dependency Check Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report
           path: target/dependency-check-report.html
@@ -57,7 +57,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Cache Maven dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -73,7 +73,7 @@ jobs:
           mvn pmd:check
 
       - name: Upload Security Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: code-security-reports
           path: target/
@@ -166,7 +166,7 @@ jobs:
           cmd_options: '-a'
 
       - name: Upload ZAP Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: zap-report
           path: 'zap-report.html'
