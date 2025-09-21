@@ -15,7 +15,7 @@
                 <pattern>
                     <pattern>
                         {
-                            "service": "user-service",
+                            "service": "ai-insights-service",
                             "traceId": "%X{traceId:-}",
                             "spanId": "%X{spanId:-}",
                             "userId": "%X{userId:-}",
@@ -31,9 +31,9 @@
 
     <!-- File Appender -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/user-service.log</file>
+        <file>logs/ai-insights-service.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>logs/user-service.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>logs/ai-insights-service.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>30</maxHistory>
             <totalSizeCap>3GB</totalSizeCap>
@@ -49,7 +49,7 @@
                 <pattern>
                     <pattern>
                         {
-                            "service": "user-service",
+                            "service": "ai-insights-service",
                             "traceId": "%X{traceId:-}",
                             "spanId": "%X{spanId:-}",
                             "userId": "%X{userId:-}",
@@ -63,16 +63,16 @@
         </encoder>
     </appender>
 
-    <!-- Security Events Appender -->
-    <appender name="SECURITY" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/security-events.log</file>
+    <!-- AI Events Appender -->
+    <appender name="AI_EVENTS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/ai-events.log</file>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>WARN</level>
+            <level>INFO</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/security-events.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/ai-events.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>90</maxHistory>
         </rollingPolicy>
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
@@ -86,14 +86,13 @@
                 <pattern>
                     <pattern>
                         {
-                            "service": "user-service",
-                            "eventType": "security",
+                            "service": "ai-insights-service",
+                            "eventType": "ai_insight",
                             "traceId": "%X{traceId:-}",
                             "spanId": "%X{spanId:-}",
                             "userId": "%X{userId:-}",
                             "requestId": "%X{requestId:-}",
-                            "ipAddress": "%X{ipAddress:-}",
-                            "userAgent": "%X{userAgent:-}",
+                            "insightType": "%X{insightType:-}",
                             "thread": "%thread"
                         }
                     </pattern>
@@ -102,14 +101,14 @@
         </encoder>
     </appender>
 
-    <!-- Logger for security events -->
-    <logger name="com.valven.ecommerce.userservice.security" level="INFO" additivity="false">
-        <appender-ref ref="SECURITY"/>
+    <!-- Logger for AI events -->
+    <logger name="com.valven.ecommerce.aiinsights.service" level="INFO" additivity="false">
+        <appender-ref ref="AI_EVENTS"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <!-- Logger for authentication events -->
-    <logger name="com.valven.ecommerce.userservice.web.AuthController" level="INFO" additivity="false">
+    <!-- Logger for AI controller -->
+    <logger name="com.valven.ecommerce.aiinsights.controller" level="INFO" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </logger>
@@ -122,13 +121,12 @@
 
     <!-- Profile-specific configurations -->
     <springProfile name="!prod">
-        <logger name="com.valven.ecommerce.userservice" level="DEBUG"/>
+        <logger name="com.valven.ecommerce.aiinsights" level="DEBUG"/>
         <logger name="org.springframework.web" level="DEBUG"/>
     </springProfile>
 
     <springProfile name="prod">
-        <logger name="com.valven.ecommerce.userservice" level="INFO"/>
+        <logger name="com.valven.ecommerce.aiinsights" level="INFO"/>
         <logger name="org.springframework.web" level="WARN"/>
-        <logger name="org.springframework.security" level="WARN"/>
     </springProfile>
 </configuration>

@@ -14,6 +14,12 @@ services:
       dockerfile: services/eureka-server/Dockerfile
     ports:
       - "8761:8761"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
       - ecommerce-network
 
@@ -26,7 +32,14 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     depends_on:
-      - eureka-server
+      eureka-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
       - ecommerce-network
 
@@ -89,6 +102,29 @@ services:
     networks:
       - ecommerce-network
 
+  ai-insights-service:
+    build:
+      context: .
+      dockerfile: services/ai-insights-service/Dockerfile
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/aiinsightsdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - SPRING_REDIS_HOST=redis
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-your-openai-api-key-here}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-your-anthropic-api-key-here}
+      - ANTHROPIC_BASE_URL=${ANTHROPIC_BASE_URL:-https://api.anthropic.com}
+    depends_on:
+      - postgres
+      - redis
+      - eureka-server
+    networks:
+      - ecommerce-network
+
   gateway:
     build:
       context: .
@@ -128,10 +164,6 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
-      - ./database-migrations/001-create-userdb-schema.sql:/docker-entrypoint-initdb.d/001-create-userdb-schema.sql
-      - ./database-migrations/002-create-productdb-schema.sql:/docker-entrypoint-initdb.d/002-create-productdb-schema.sql
-      - ./database-migrations/003-create-orderdb-schema.sql:/docker-entrypoint-initdb.d/003-create-orderdb-schema.sql
     ports:
       - "5432:5432"
     networks:
