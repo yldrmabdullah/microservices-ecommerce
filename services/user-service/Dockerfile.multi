@@ -1,0 +1,25 @@
+# Multi-stage build
+FROM openjdk:21-jdk-slim AS builder
+
+WORKDIR /app
+
+# Copy everything
+COPY . .
+
+# Install Maven
+RUN apt-get update && apt-get install -y maven
+
+# Build the application
+RUN mvn clean package -DskipTests -f services/user-service/pom.xml
+
+# Runtime stage
+FROM openjdk:21-jre-slim
+
+WORKDIR /app
+
+# Copy the built JAR from builder stage
+COPY --from=builder /app/services/user-service/target/*.jar app.jar
+
+# Run the application
+EXPOSE 8083
+CMD ["java", "-jar", "app.jar"]

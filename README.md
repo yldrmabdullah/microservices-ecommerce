@@ -70,6 +70,7 @@ This platform implements a robust microservices architecture following industry 
 - **User Service** (Port 8083): User authentication, registration, and profile management
 - **Product Service** (Port 8081): Product catalog, search, inventory management, and stock tracking
 - **Order Service** (Port 8082): Shopping cart management and order processing
+- **AI Insights Service** (Port 8084): AI-powered analytics, recommendations, and insights
 
 ### Infrastructure Services
 - **Eureka Server** (Port 8761): Service discovery and registration
@@ -200,6 +201,7 @@ docker-compose down
 - **User Service**: http://localhost:8083
 - **Product Service**: http://localhost:8081
 - **Order Service**: http://localhost:8082
+- **AI Insights Service**: http://localhost:8084
 
 ### Monitoring URLs
 - **Prometheus Metrics**: http://localhost:8080/actuator/prometheus
@@ -330,7 +332,3 @@ Each database includes proper indexing, constraints, and migration scripts for s
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For support and questions, please contact the development team at dev@valven.com or create an issue in the project repository.# microservices-ecommerce
