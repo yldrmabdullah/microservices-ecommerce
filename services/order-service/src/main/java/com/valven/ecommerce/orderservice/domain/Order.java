@@ -36,7 +36,7 @@ public class Order {
     
     @NotNull(message = "Total amount is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Total amount must be greater than 0")
-    @Column(name = "total_amount", nullable = false, precision = 12, scale = 2)
+    @Column(name = "total_amount", nullable = false)
     private Double totalAmount;
 
     @ElementCollection

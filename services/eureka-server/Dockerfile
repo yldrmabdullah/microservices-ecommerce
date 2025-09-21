@@ -2,8 +2,18 @@ FROM openjdk:21-jdk-slim
 
 WORKDIR /app
 
-COPY target/eureka-server-*.jar app.jar
+# Copy everything
+COPY . .
 
+# Install Maven
+RUN apt-get update && apt-get install -y maven
+
+# Build the application
+RUN mvn clean package -DskipTests -f services/eureka-server/pom.xml
+
+# Copy the built JAR to the working directory
+RUN cp services/eureka-server/target/eureka-server-0.0.1-SNAPSHOT.jar app.jar
+
+# Run the application
 EXPOSE 8761
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "app.jar"]

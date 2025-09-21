@@ -131,25 +131,25 @@ class ProductServiceTest {
     @Test
     void deleteProduct_ShouldDeleteProduct_WhenProductExists() {
         
-        when(productRepository.existsById(1L)).thenReturn(true);
+        when(productRepository.findById(1L)).thenReturn(Optional.of(testProduct));
 
         
         productService.deleteProduct(1L);
 
         
-        verify(productRepository).existsById(1L);
-        verify(productRepository).deleteById(1L);
+        verify(productRepository).findById(1L);
+        verify(productRepository).delete(testProduct);
     }
 
     @Test
     void deleteProduct_ShouldThrowException_WhenProductNotFound() {
         
-        when(productRepository.existsById(1L)).thenReturn(false);
+        when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
         
         assertThrows(ProductNotFoundException.class, () -> productService.deleteProduct(1L));
-        verify(productRepository).existsById(1L);
-        verify(productRepository, never()).deleteById(any());
+        verify(productRepository).findById(1L);
+        verify(productRepository, never()).delete(any());
     }
 
     @Test
