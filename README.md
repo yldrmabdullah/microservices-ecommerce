@@ -187,7 +187,7 @@ docker-compose down
 
 ### Application URLs
 - **Main UI**: http://localhost:8085
-- **AI Insights Dashboard**: http://localhost:8084/insights
+- **AI Insights Dashboard**: http://localhost:8084/web/insights
 - **API Gateway**: http://localhost:8080
 - **Eureka Dashboard**: http://localhost:8761
 - **Config Server**: http://localhost:8888
@@ -307,8 +307,8 @@ Each database includes proper indexing, constraints, and migration scripts for s
 The AI Insights Service provides intelligent analytics and recommendations for the e-commerce platform:
 
 ### Web Interface
-- **Dashboard**: http://localhost:8084/insights
-- **Insight Types**: http://localhost:8084/insights/types
+- **Dashboard**: http://localhost:8084/web/insights
+- **Insight Types**: http://localhost:8084/web/insights/types
 - **API Documentation**: http://localhost:8084/swagger-ui.html
 
 ### Available Insight Types

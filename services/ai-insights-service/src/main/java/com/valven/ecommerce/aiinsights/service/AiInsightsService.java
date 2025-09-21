@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -35,8 +35,8 @@ public class AiInsightsService {
                     .metadata(createMetadata(request))
                     .tags(generateTags(request.getInsightType()))
                     .confidence(0.85)
-                    .createdAt(LocalDateTime.now())
-                    .expiresAt(LocalDateTime.now().plusDays(7))
+                    .createdAt(Instant.from(LocalDateTime.now()))
+                    .expiresAt(Instant.from(LocalDateTime.now().plusDays(7)))
                     .status("ACTIVE")
                     .build();
                     
@@ -103,8 +103,8 @@ public class AiInsightsService {
                 .metadata(createMetadata(request))
                 .tags(Arrays.asList("fallback", "error"))
                 .confidence(0.0)
-                .createdAt(LocalDateTime.now())
-                .expiresAt(LocalDateTime.now().plusHours(1))
+                .createdAt(Instant.from(LocalDateTime.now()))
+                .expiresAt(Instant.from(LocalDateTime.now().plusHours(1)))
                 .status("ERROR")
                 .build();
     }
