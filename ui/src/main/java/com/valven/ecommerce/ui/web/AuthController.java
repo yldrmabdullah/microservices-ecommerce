@@ -2,7 +2,8 @@ package com.valven.ecommerce.ui.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,9 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/auth")
-@Slf4j
 public class AuthController {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     private final WebClient userClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
 

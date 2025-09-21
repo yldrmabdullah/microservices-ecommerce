@@ -9,7 +9,6 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class UserResponse {
     private UUID id;
     private String name;
@@ -17,4 +16,14 @@ public class UserResponse {
     private LocalDateTime createdAt;
     private LocalDateTime lastLogin;
     private Boolean isActive;
+
+    // Constructor for the specific usage pattern
+    public UserResponse(UUID id, String name, String email, LocalDateTime createdAt, LocalDateTime lastLogin, Boolean isActive) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.createdAt = createdAt;
+        this.lastLogin = lastLogin;
+        this.isActive = isActive;
+    }
 }

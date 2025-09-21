@@ -4,7 +4,8 @@ import com.valven.ecommerce.ui.model.Product;
 import com.valven.ecommerce.ui.model.CartItem;
 import com.valven.ecommerce.ui.model.Cart;
 import com.valven.ecommerce.ui.model.Order;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +19,9 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Controller
-@Slf4j
 public class EcommerceController {
 
+    private static final Logger log = LoggerFactory.getLogger(EcommerceController.class);
     private final WebClient productClient;
     private final WebClient orderClient;
     private final ObjectMapper objectMapper = new ObjectMapper();

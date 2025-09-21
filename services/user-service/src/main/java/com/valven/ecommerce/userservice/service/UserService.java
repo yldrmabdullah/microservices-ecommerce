@@ -6,6 +6,8 @@ import com.valven.ecommerce.userservice.repository.UserRepository;
 import com.valven.ecommerce.userservice.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,13 +18,19 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class UserService {
 
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+    }
 
     @Transactional
     @CacheEvict(value = "users", allEntries = true)
@@ -50,7 +58,6 @@ public class UserService {
 
         return new AuthResponse(
                 token,
-                "Bearer",
                 savedUser.getId(),
                 savedUser.getName(),
                 savedUser.getEmail(),
@@ -81,7 +88,6 @@ public class UserService {
 
         return new AuthResponse(
                 token,
-                "Bearer",
                 user.getId(),
                 user.getName(),
                 user.getEmail(),

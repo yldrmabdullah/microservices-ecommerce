@@ -60,10 +60,10 @@ public class OrderMetricsService {
     }
 
     public void recordOrderCreationTime(Timer.Sample sample) {
-        Timer.builder("orders.creation.time")
+        Timer timer = Timer.builder("orders.creation.time")
                 .description("Time taken to create an order")
-                .register(meterRegistry)
-                .record(sample.stop());
+                .register(meterRegistry);
+        sample.stop(timer);
         log.debug("Order creation time metric recorded");
     }
 }

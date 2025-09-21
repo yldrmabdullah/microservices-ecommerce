@@ -4,8 +4,8 @@ import com.valven.ecommerce.productservice.domain.Product;
 import com.valven.ecommerce.productservice.exception.InsufficientStockException;
 import com.valven.ecommerce.productservice.exception.ProductNotFoundException;
 import com.valven.ecommerce.productservice.repository.ProductRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -14,12 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 @Transactional(readOnly = true)
 public class ProductService {
 
+    private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     private final ProductRepository productRepository;
+
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     @Cacheable(value = "products", key = "'all'", unless = "#result.isEmpty()")
     public List<Product> getAllProducts() {
