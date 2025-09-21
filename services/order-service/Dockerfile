@@ -2,16 +2,11 @@ FROM openjdk:21-jdk-slim
 
 WORKDIR /app
 
-# Copy Maven files
-COPY pom.xml .
-COPY services/order-service/pom.xml ./services/order-service/
+# Copy everything
+COPY . .
 
-# Download dependencies
+# Install Maven
 RUN apt-get update && apt-get install -y maven
-RUN mvn dependency:go-offline -f services/order-service/pom.xml
-
-# Copy source code
-COPY services/order-service/src ./services/order-service/src
 
 # Build the application
 RUN mvn clean package -DskipTests -f services/order-service/pom.xml
