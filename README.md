@@ -70,7 +70,7 @@ This platform implements a robust microservices architecture following industry 
 - **User Service** (Port 8083): User authentication, registration, and profile management
 - **Product Service** (Port 8081): Product catalog, search, inventory management, and stock tracking
 - **Order Service** (Port 8082): Shopping cart management and order processing
-- **AI Insights Service** (Port 8084): AI-powered analytics, recommendations, and insights
+- **AI Insights Service** (Port 8084): AI-powered analytics, recommendations, and insights with web interface
 
 ### Infrastructure Services
 - **Eureka Server** (Port 8761): Service discovery and registration
@@ -187,6 +187,7 @@ docker-compose down
 
 ### Application URLs
 - **Main UI**: http://localhost:8085
+- **AI Insights Dashboard**: http://localhost:8084/insights
 - **API Gateway**: http://localhost:8080
 - **Eureka Dashboard**: http://localhost:8761
 - **Config Server**: http://localhost:8888
@@ -195,6 +196,7 @@ docker-compose down
 - **User Service API**: http://localhost:8083/swagger-ui.html
 - **Product Service API**: http://localhost:8081/swagger-ui.html
 - **Order Service API**: http://localhost:8082/swagger-ui.html
+- **AI Insights Service API**: http://localhost:8084/swagger-ui.html
 - **Gateway API**: http://localhost:8080/swagger-ui.html
 
 ### Service URLs
@@ -217,6 +219,10 @@ docker-compose down
 - ✓ Order processing and history
 - ✓ Inventory management with stock tracking
 - ✓ Real-time stock updates
+- ✓ AI-powered product recommendations
+- ✓ User behavior analysis and insights
+- ✓ Sales trend analysis
+- ✓ Inventory optimization suggestions
 
 ### Microservices Features
 - ✓ Service discovery with Eureka
@@ -251,6 +257,17 @@ docker-compose down
 - ✓ Database migration support
 - ✓ Docker containerization
 
+### AI Insights Features
+- ✓ **Product Recommendations**: Personalized product suggestions based on user behavior
+- ✓ **User Behavior Analysis**: Deep insights into customer interaction patterns
+- ✓ **Sales Trend Analysis**: Market trend identification and forecasting
+- ✓ **Inventory Optimization**: Smart inventory management recommendations
+- ✓ **Customer Segmentation**: Advanced customer grouping and targeting
+- ✓ **Price Optimization**: Dynamic pricing strategies and recommendations
+- ✓ **Web Dashboard**: Interactive web interface for insight management
+- ✓ **Multiple AI Providers**: Support for OpenAI and Anthropic APIs
+- ✓ **Real-time Processing**: Fast insight generation and updates
+
 ## Configuration
 
 ### Environment Variables
@@ -259,6 +276,10 @@ docker-compose down
 - `EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE`: Eureka server URL
 - `JWT_SECRET`: JWT signing secret key
 - `POSTGRES_PASSWORD`: PostgreSQL password
+- `OPENAI_API_KEY`: OpenAI API key for AI insights
+- `OPENAI_BASE_URL`: OpenAI API base URL (default: https://api.openai.com/v1)
+- `ANTHROPIC_API_KEY`: Anthropic API key for alternative AI provider
+- `ANTHROPIC_BASE_URL`: Anthropic API base URL (default: https://api.anthropic.com)
 
 ### Rate Limiting Configuration
 - **Auth endpoints**: 10 requests/minute per user
@@ -277,8 +298,42 @@ The platform uses a microservices database pattern with separate databases for e
 - **userdb**: User authentication and profile data
 - **productdb**: Product catalog and inventory data
 - **orderdb**: Shopping cart and order data
+- **aiinsightsdb**: AI insights, recommendations, and analytics data
 
 Each database includes proper indexing, constraints, and migration scripts for schema management.
+
+## AI Insights Service
+
+The AI Insights Service provides intelligent analytics and recommendations for the e-commerce platform:
+
+### Web Interface
+- **Dashboard**: http://localhost:8084/insights
+- **Insight Types**: http://localhost:8084/insights/types
+- **API Documentation**: http://localhost:8084/swagger-ui.html
+
+### Available Insight Types
+1. **Product Recommendations** - Personalized product suggestions
+2. **User Behavior Analysis** - Customer interaction insights
+3. **Sales Trend Analysis** - Market trend identification
+4. **Inventory Optimization** - Smart inventory management
+5. **Customer Segmentation** - Advanced customer grouping
+6. **Price Optimization** - Dynamic pricing strategies
+
+### Usage Examples
+```bash
+# Generate product recommendations
+curl -X POST http://localhost:8084/api/ai-insights/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userId": "user123",
+    "insightType": "product_recommendation",
+    "data": {"purchaseHistory": [], "preferences": []},
+    "context": "shopping_session"
+  }'
+
+# Get available insight types
+curl http://localhost:8084/api/ai-insights/insight-types
+```
 
 ## Development Guidelines
 
