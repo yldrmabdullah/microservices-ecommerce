@@ -83,6 +83,21 @@ valven/
 - Docker & Docker Compose (optional)
 - Redis (for production features)
 
+### Security Configuration
+Before running the application, set the following environment variables:
+
+```bash
+# Required for production
+export POSTGRES_PASSWORD="your-secure-postgres-password"
+export JWT_SECRET="your-very-strong-secret-key-here-must-be-at-least-256-bits-long-for-hs512-algorithm"
+```
+
+**Important Security Notes:**
+- Never use default passwords in production
+- Generate a strong JWT secret (at least 256 bits)
+- Use environment variables for all sensitive configuration
+- Ensure proper CORS configuration for your domain
+
 ### Local Development (Without Docker)
 
 1. **Start Redis** (required for caching and rate limiting):

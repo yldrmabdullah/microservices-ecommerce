@@ -85,7 +85,8 @@ public class EcommerceController {
             
             try {
                 String cartResponse = orderClient.get()
-                        .uri("/carts/user123")
+                        .uri("/carts")
+                        .header("Authorization", "Bearer " + session.getAttribute("token"))
                         .retrieve()
                         .bodyToMono(String.class)
                         .block();
@@ -135,8 +136,12 @@ public class EcommerceController {
                            @RequestParam String productName,
                            @RequestParam Double price,
                            @RequestParam(defaultValue = "1") Integer quantity,
-                           @RequestParam(defaultValue = "user123") String userId,
+                           HttpSession session,
                            Model model) {
+        String userId = (String) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/auth/login?error=Please login to add items to cart";
+        }
         try {
             String productResponse = productClient.get()
                     .uri("/products/" + productId)
@@ -164,7 +169,8 @@ public class EcommerceController {
             item.setQuantity(quantity);
 
             String cartResponse = orderClient.post()
-                    .uri("/carts/" + userId + "/items")
+                    .uri("/carts/items")
+                    .header("Authorization", "Bearer " + session.getAttribute("token"))
                     .bodyValue(item)
                     .retrieve()
                     .bodyToMono(String.class)
@@ -194,10 +200,16 @@ public class EcommerceController {
     }
 
     @GetMapping("/cart")
-    public String cart(@RequestParam(defaultValue = "user123") String userId, Model model) {
+    public String cart(HttpSession session, Model model) {
+        String userId = (String) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/auth/login?error=Please login to view cart";
+        }
+        
         try {
             String cartResponse = orderClient.get()
-                    .uri("/carts/" + userId)
+                    .uri("/carts")
+                    .header("Authorization", "Bearer " + session.getAttribute("token"))
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
@@ -217,10 +229,16 @@ public class EcommerceController {
 
     @PostMapping("/cart/remove")
     public String removeFromCart(@RequestParam Long productId, 
-                                @RequestParam(defaultValue = "user123") String userId) {
+                                HttpSession session) {
+        String userId = (String) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/auth/login?error=Please login to modify cart";
+        }
+        
         try {
             String cartResponse = orderClient.get()
-                    .uri("/carts/" + userId)
+                    .uri("/carts")
+                    .header("Authorization", "Bearer " + session.getAttribute("token"))
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
@@ -238,7 +256,8 @@ public class EcommerceController {
             }
             
             orderClient.delete()
-                    .uri("/carts/" + userId + "/items/" + productId)
+                    .uri("/carts/items/" + productId)
+                    .header("Authorization", "Bearer " + session.getAttribute("token"))
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
@@ -266,10 +285,16 @@ public class EcommerceController {
     }
 
     @PostMapping("/cart/clear")
-    public String clearCart(@RequestParam(defaultValue = "user123") String userId) {
+    public String clearCart(HttpSession session) {
+        String userId = (String) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/auth/login?error=Please login to modify cart";
+        }
+        
         try {
             String cartResponse = orderClient.get()
-                    .uri("/carts/" + userId)
+                    .uri("/carts")
+                    .header("Authorization", "Bearer " + session.getAttribute("token"))
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
@@ -277,7 +302,8 @@ public class EcommerceController {
             Cart cart = parseCartFromApiResponse(cartResponse);
             
             orderClient.delete()
-                    .uri("/carts/" + userId)
+                    .uri("/carts")
+                    .header("Authorization", "Bearer " + session.getAttribute("token"))
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
@@ -307,10 +333,16 @@ public class EcommerceController {
     }
 
     @PostMapping("/order/create")
-    public String createOrder(@RequestParam(defaultValue = "user123") String userId, Model model) {
+    public String createOrder(HttpSession session, Model model) {
+        String userId = (String) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/auth/login?error=Please login to create order";
+        }
+        
         try {
             Cart cart = orderClient.get()
-                    .uri("/carts/" + userId)
+                    .uri("/carts")
+                    .header("Authorization", "Bearer " + session.getAttribute("token"))
                     .retrieve()
                     .bodyToMono(Cart.class)
                     .block();
@@ -325,6 +357,7 @@ public class EcommerceController {
 
                 Order createdOrder = orderClient.post()
                         .uri("/orders")
+                        .header("Authorization", "Bearer " + session.getAttribute("token"))
                         .bodyValue(order)
                         .retrieve()
                         .bodyToMono(Order.class)
@@ -340,10 +373,16 @@ public class EcommerceController {
     }
 
     @GetMapping("/orders")
-    public String orders(@RequestParam(defaultValue = "user123") String userId, Model model) {
+    public String orders(HttpSession session, Model model) {
+        String userId = (String) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/auth/login?error=Please login to view orders";
+        }
+        
         try {
             List<Order> orders = orderClient.get()
-                    .uri("/orders?userId=" + userId)
+                    .uri("/orders")
+                    .header("Authorization", "Bearer " + session.getAttribute("token"))
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<List<Order>>() {})
                     .block();

@@ -6,6 +6,7 @@ import com.valven.ecommerce.orderservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class AuthController {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<AuthResponse>> signup(@RequestBody SignupRequest request) {
@@ -37,7 +39,7 @@ public class AuthController {
             User user = new User();
             user.setName(request.getName());
             user.setEmail(request.getEmail());
-            user.setPassword(request.getPassword());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setIsActive(true);
             user.setCreatedAt(LocalDateTime.now());
 
@@ -74,7 +76,7 @@ public class AuthController {
                         .body(ApiResponse.error("Invalid credentials", "INVALID_CREDENTIALS"));
             }
 
-            if (!user.getPassword().equals(request.getPassword())) {
+            if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                 return ResponseEntity.badRequest()
                         .body(ApiResponse.error("Invalid credentials", "INVALID_CREDENTIALS"));
             }

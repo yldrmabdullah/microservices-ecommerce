@@ -40,8 +40,9 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/userdb
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-password}
       - SPRING_REDIS_HOST=redis
+      - JWT_SECRET=${JWT_SECRET:-your-very-strong-secret-key-here-must-be-at-least-256-bits-long-for-hs512-algorithm}
     depends_on:
       - postgres
       - redis
@@ -59,7 +60,7 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/productdb
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-password}
       - SPRING_REDIS_HOST=redis
     depends_on:
       - postgres
@@ -78,8 +79,9 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/orderdb
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-password}
       - SPRING_REDIS_HOST=redis
+      - JWT_SECRET=${JWT_SECRET:-your-very-strong-secret-key-here-must-be-at-least-256-bits-long-for-hs512-algorithm}
     depends_on:
       - postgres
       - redis
@@ -123,7 +125,7 @@ services:
     environment:
       - POSTGRES_DB=productdb
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql

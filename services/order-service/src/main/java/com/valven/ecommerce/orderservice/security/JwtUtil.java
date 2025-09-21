@@ -1,4 +1,4 @@
-package com.valven.ecommerce.userservice.security;
+package com.valven.ecommerce.orderservice.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -22,19 +22,6 @@ public class JwtUtil {
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
-    }
-
-    public String generateToken(UUID userId, String email) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + expiration);
-
-        return Jwts.builder()
-                .setSubject(userId.toString())
-                .claim("email", email)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
-                .compact();
     }
 
     public UUID getUserIdFromToken(String token) {
@@ -87,9 +74,5 @@ public class JwtUtil {
             log.error("Invalid JWT token: {}", e.getMessage());
             return false;
         }
-    }
-
-    public long getExpirationTime() {
-        return expiration;
     }
 }

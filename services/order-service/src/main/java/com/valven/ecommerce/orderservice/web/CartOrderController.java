@@ -5,24 +5,28 @@ import com.valven.ecommerce.orderservice.domain.CartItem;
 import com.valven.ecommerce.orderservice.domain.Order;
 import com.valven.ecommerce.orderservice.repository.CartRepository;
 import com.valven.ecommerce.orderservice.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
+@Slf4j
 public class CartOrderController {
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
 
-    public CartOrderController(CartRepository cartRepository, OrderRepository orderRepository) {
-        this.cartRepository = cartRepository;
-        this.orderRepository = orderRepository;
-    }
-
-    @PostMapping("/carts/{userId}/items")
-    public ResponseEntity<Cart> addItem(@PathVariable("userId") String userId, @RequestBody CartItem item) {
+    @PostMapping("/carts/items")
+    public ResponseEntity<Cart> addItem(@RequestBody CartItem item, HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.badRequest().build();
+        }
         Cart cart = cartRepository.findByUserId(userId).orElseGet(() -> {
             Cart c = new Cart();
             c.setUserId(userId);
@@ -46,13 +50,21 @@ public class CartOrderController {
         return ResponseEntity.ok(saved);
     }
 
-    @GetMapping("/carts/{userId}")
-    public ResponseEntity<Cart> getCart(@PathVariable("userId") String userId) {
+    @GetMapping("/carts")
+    public ResponseEntity<Cart> getCart(HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.badRequest().build();
+        }
         return cartRepository.findByUserId(userId).map(ResponseEntity::ok).orElse(ResponseEntity.ok(new Cart()));
     }
 
-    @DeleteMapping("/carts/{userId}/items/{productId}")
-    public ResponseEntity<Cart> removeItem(@PathVariable("userId") String userId, @PathVariable("productId") Long productId) {
+    @DeleteMapping("/carts/items/{productId}")
+    public ResponseEntity<Cart> removeItem(@PathVariable("productId") Long productId, HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.badRequest().build();
+        }
         Cart cart = cartRepository.findByUserId(userId).orElse(null);
         if (cart != null) {
             cart.getItems().removeIf(item -> item.getProductId().equals(productId));
@@ -61,8 +73,12 @@ public class CartOrderController {
         return ResponseEntity.ok(cart != null ? cart : new Cart());
     }
 
-    @DeleteMapping("/carts/{userId}")
-    public ResponseEntity<Cart> clearCart(@PathVariable("userId") String userId) {
+    @DeleteMapping("/carts")
+    public ResponseEntity<Cart> clearCart(HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.badRequest().build();
+        }
         Cart cart = cartRepository.findByUserId(userId).orElse(null);
         if (cart != null) {
             cart.getItems().clear();
@@ -72,13 +88,22 @@ public class CartOrderController {
     }
 
     @PostMapping("/orders")
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
+    public ResponseEntity<Order> createOrder(@RequestBody Order order, HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        order.setUserId(userId);
         Order saved = orderRepository.save(order);
         return ResponseEntity.created(URI.create("/api/orders/" + saved.getId())).body(saved);
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<java.util.List<Order>> getAllOrders(@RequestParam(defaultValue = "user123") String userId) {
+    public ResponseEntity<java.util.List<Order>> getAllOrders(HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.badRequest().build();
+        }
         java.util.List<Order> orders = orderRepository.findByUserId(userId);
         return ResponseEntity.ok(orders);
     }
