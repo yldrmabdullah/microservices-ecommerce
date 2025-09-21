@@ -8,7 +8,8 @@ import com.valven.ecommerce.orderservice.repository.CartRepository;
 import com.valven.ecommerce.orderservice.repository.OrderRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +19,9 @@ import java.net.URI;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-@Slf4j
 public class CartOrderController {
 
+    private static final Logger log = LoggerFactory.getLogger(CartOrderController.class);
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
 
@@ -29,7 +30,7 @@ public class CartOrderController {
         String userId = (String) request.getAttribute("userId");
         if (userId == null) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("User ID not found in request", "MISSING_USER_ID"));
+                    .body(ApiResponse.<Cart>error("User ID not found in request", "MISSING_USER_ID"));
         }
         
         try {
@@ -59,7 +60,7 @@ public class CartOrderController {
         } catch (Exception e) {
             log.error("Error adding item to cart: {}", e.getMessage(), e);
             return ResponseEntity.internalServerError()
-                    .body(ApiResponse.error("Failed to add item to cart: " + e.getMessage(), "CART_ADD_ERROR"));
+                    .body(ApiResponse.<Cart>error("Failed to add item to cart: " + e.getMessage(), "CART_ADD_ERROR"));
         }
     }
 

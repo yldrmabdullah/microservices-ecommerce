@@ -4,7 +4,8 @@ import com.valven.ecommerce.orderservice.domain.User;
 import com.valven.ecommerce.orderservice.dto.*;
 import com.valven.ecommerce.orderservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Slf4j
 public class AuthController {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -28,12 +29,12 @@ public class AuthController {
 
             if (!request.getPassword().equals(request.getConfirmPassword())) {
                 return ResponseEntity.badRequest()
-                        .body(ApiResponse.error("Passwords do not match", "PASSWORD_MISMATCH"));
+                        .body(ApiResponse.<AuthResponse>error("Passwords do not match", "PASSWORD_MISMATCH"));
             }
 
             if (userRepository.existsByEmail(request.getEmail())) {
                 return ResponseEntity.badRequest()
-                        .body(ApiResponse.error("User already exists with this email", "USER_EXISTS"));
+                        .body(ApiResponse.<AuthResponse>error("User already exists with this email", "USER_EXISTS"));
             }
 
             User user = new User();
@@ -59,7 +60,7 @@ public class AuthController {
         } catch (Exception e) {
             log.error("Error during signup: {}", e.getMessage(), e);
             return ResponseEntity.internalServerError()
-                    .body(ApiResponse.error("Registration failed. Please try again."));
+                    .body(ApiResponse.<AuthResponse>error("Registration failed. Please try again."));
         }
     }
 
@@ -73,12 +74,12 @@ public class AuthController {
 
             if (user == null || !user.getIsActive()) {
                 return ResponseEntity.badRequest()
-                        .body(ApiResponse.error("Invalid credentials", "INVALID_CREDENTIALS"));
+                        .body(ApiResponse.<AuthResponse>error("Invalid credentials", "INVALID_CREDENTIALS"));
             }
 
             if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                 return ResponseEntity.badRequest()
-                        .body(ApiResponse.error("Invalid credentials", "INVALID_CREDENTIALS"));
+                        .body(ApiResponse.<AuthResponse>error("Invalid credentials", "INVALID_CREDENTIALS"));
             }
 
             user.setLastLogin(LocalDateTime.now());
@@ -98,7 +99,7 @@ public class AuthController {
         } catch (Exception e) {
             log.error("Error during signin: {}", e.getMessage(), e);
             return ResponseEntity.internalServerError()
-                    .body(ApiResponse.error("Login failed. Please try again."));
+                    .body(ApiResponse.<AuthResponse>error("Login failed. Please try again."));
         }
     }
 }

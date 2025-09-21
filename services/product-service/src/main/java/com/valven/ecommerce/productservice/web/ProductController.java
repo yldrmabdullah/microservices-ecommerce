@@ -82,7 +82,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long id) {
         log.info("Deleting product with id: {}", id);
         productService.deleteProduct(id);
-        return ResponseEntity.ok(ApiResponse.success("Product deleted successfully", null));
+        return ResponseEntity.ok(ApiResponse.<Void>success("Product deleted successfully", null));
     }
 
     @PostMapping("/{id}/stock/reduce")
@@ -91,7 +91,7 @@ public class ProductController {
             @RequestParam int quantity) {
         log.info("Reducing stock for product {} by quantity {}", id, quantity);
         productService.reduceStock(id, quantity);
-        return ResponseEntity.ok(ApiResponse.success("Stock reduced successfully", null));
+        return ResponseEntity.ok(ApiResponse.<Void>success("Stock reduced successfully", null));
     }
 
     @PostMapping("/{id}/stock/add")
@@ -100,7 +100,7 @@ public class ProductController {
             @RequestParam int quantity) {
         log.info("Adding stock for product {} by quantity {}", id, quantity);
         productService.addStock(id, quantity);
-        return ResponseEntity.ok(ApiResponse.success("Stock added successfully", null));
+        return ResponseEntity.ok(ApiResponse.<Void>success("Stock added successfully", null));
     }
 
     @GetMapping("/{id}/stock/check")

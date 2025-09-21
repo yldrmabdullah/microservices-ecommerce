@@ -3,8 +3,6 @@ package com.valven.ecommerce.userservice.web;
 import com.valven.ecommerce.userservice.dto.*;
 import com.valven.ecommerce.userservice.service.UserService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,10 +13,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
-@Slf4j
 public class AuthController {
 
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+
     private final UserService userService;
 
     public AuthController(UserService userService) {
@@ -35,7 +33,7 @@ public class AuthController {
         } catch (Exception e) {
             log.error("Signup failed for email {}: {}", request.getEmail(), e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
+                    .body(ApiResponse.<AuthResponse>error(e.getMessage()));
         }
     }
 
@@ -48,7 +46,7 @@ public class AuthController {
         } catch (Exception e) {
             log.error("Signin failed for email {}: {}", request.getEmail(), e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(e.getMessage()));
+                    .body(ApiResponse.<AuthResponse>error(e.getMessage()));
         }
     }
 
@@ -64,7 +62,7 @@ public class AuthController {
         } catch (Exception e) {
             log.error("Token validation failed: {}", e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Invalid token"));
+                    .body(ApiResponse.<Boolean>error("Invalid token"));
         }
     }
 
@@ -81,7 +79,7 @@ public class AuthController {
         } catch (Exception e) {
             log.error("Failed to get user info: {}", e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Failed to retrieve user information"));
+                    .body(ApiResponse.<UserResponse>error("Failed to retrieve user information"));
         }
     }
 }

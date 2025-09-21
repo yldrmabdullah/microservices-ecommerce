@@ -1,7 +1,8 @@
 package com.valven.ecommerce.orderservice.config;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,9 +12,9 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class DatabaseHealthIndicator implements HealthIndicator {
 
+    private static final Logger log = LoggerFactory.getLogger(DatabaseHealthIndicator.class);
     private final JpaRepository<?, ?> orderRepository;
     private final JpaRepository<?, ?> cartRepository;
 
