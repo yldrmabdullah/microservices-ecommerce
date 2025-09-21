@@ -75,7 +75,7 @@ class CartOrderControllerIntegrationTest {
     void addItemToCart_ShouldAddToExistingCart_WhenCartExists() throws Exception {
         
         Cart existingCart = new Cart();
-        existingCart.setUserId(testUserId);
+        existingCart.setUserId(UUID.fromString(testUserId));
         cartRepository.save(existingCart);
 
         CartItem cartItem = new CartItem();
@@ -114,7 +114,7 @@ class CartOrderControllerIntegrationTest {
     void getCart_ShouldReturnCart_WhenCartExists() throws Exception {
         
         Cart cart = new Cart();
-        cart.setUserId(testUserId);
+        cart.setUserId(UUID.fromString(testUserId));
         CartItem item = new CartItem();
         item.setProductId(1L);
         item.setProductName("Test Product");
@@ -145,7 +145,7 @@ class CartOrderControllerIntegrationTest {
     void removeItemFromCart_ShouldRemoveItem_WhenItemExists() throws Exception {
         
         Cart cart = new Cart();
-        cart.setUserId(testUserId);
+        cart.setUserId(UUID.fromString(testUserId));
         CartItem item = new CartItem();
         item.setProductId(1L);
         item.setProductName("Test Product");
@@ -166,7 +166,7 @@ class CartOrderControllerIntegrationTest {
     void clearCart_ShouldClearAllItems_WhenCartExists() throws Exception {
         
         Cart cart = new Cart();
-        cart.setUserId(testUserId);
+        cart.setUserId(UUID.fromString(testUserId));
         CartItem item = new CartItem();
         item.setProductId(1L);
         item.setProductName("Test Product");
@@ -187,7 +187,7 @@ class CartOrderControllerIntegrationTest {
     void createOrder_ShouldCreateOrder_WhenValidData() throws Exception {
         
         Order order = new Order();
-        order.setUserId(testUserId);
+        order.setUserId(UUID.fromString(testUserId));
         order.setTotalAmount(199.98);
         CartItem item = new CartItem();
         item.setProductId(1L);
@@ -212,7 +212,7 @@ class CartOrderControllerIntegrationTest {
     void getAllOrders_ShouldReturnUserOrders_WhenOrdersExist() throws Exception {
         
         Order order = new Order();
-        order.setUserId(testUserId);
+        order.setUserId(UUID.fromString(testUserId));
         order.setTotalAmount(199.98);
         orderRepository.save(order);
 

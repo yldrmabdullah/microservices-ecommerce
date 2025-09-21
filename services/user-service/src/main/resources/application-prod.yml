@@ -48,11 +48,11 @@ spring:
     redis:
       time-to-live: 600000
 
-  # Sleuth Configuration
-  sleuth:
+  # Tracing Configuration
+  tracing:
     zipkin:
       base-url: http://zipkin:9411
-    sampler:
+    sampling:
       probability: 1.0
 
 # Eureka Configuration
