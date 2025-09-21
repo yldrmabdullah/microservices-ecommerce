@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.core.ParameterizedTypeReference;
 import reactor.core.publisher.Mono;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -87,6 +88,22 @@ public class EcommerceController {
             List<Product> products = parseProductsFromApiResponse(response);
             model.addAttribute("products", products != null ? products : List.of());
             model.addAttribute("search", search);
+            
+            // Get cart count for badge
+            try {
+                String cartResponse = orderClient.get()
+                        .uri("/carts/user123")
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
+                Cart cart = parseCartFromApiResponse(cartResponse);
+                int cartCount = cart != null && cart.getItems() != null ? 
+                    cart.getItems().stream().mapToInt(CartItem::getQuantity).sum() : 0;
+                model.addAttribute("cartCount", cartCount);
+            } catch (Exception e) {
+                log.error("Error loading cart count: {}", e.getMessage());
+                model.addAttribute("cartCount", 0);
+            }
             
             // Add success/error messages from URL parameters
             if (success != null) {
@@ -168,8 +185,7 @@ public class EcommerceController {
             // Reduce stock in product service
             try {
                 productClient.post()
-                        .uri("/products/" + productId + "/stock/reduce")
-                        .bodyValue(quantity)
+                        .uri("/products/" + productId + "/stock/reduce?quantity=" + quantity)
                         .retrieve()
                         .bodyToMono(String.class)
                         .block();
@@ -217,6 +233,25 @@ public class EcommerceController {
     public String removeFromCart(@RequestParam Long productId, 
                                 @RequestParam(defaultValue = "user123") String userId) {
         try {
+            // First, get the cart to find the quantity of the product being removed
+            String cartResponse = orderClient.get()
+                    .uri("/carts/" + userId)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            
+            Cart cart = parseCartFromApiResponse(cartResponse);
+            int quantityToRestore = 0;
+            
+            if (cart != null && cart.getItems() != null) {
+                for (CartItem item : cart.getItems()) {
+                    if (item.getProductId().equals(productId)) {
+                        quantityToRestore = item.getQuantity();
+                        break;
+                    }
+                }
+            }
+            
             // Remove item from cart
             orderClient.delete()
                     .uri("/carts/" + userId + "/items/" + productId)
@@ -224,12 +259,72 @@ public class EcommerceController {
                     .bodyToMono(String.class)
                     .block();
             
+            // Restore stock in product service
+            if (quantityToRestore > 0) {
+                try {
+                    productClient.post()
+                            .uri("/products/" + productId + "/stock/add?quantity=" + quantityToRestore)
+                            .retrieve()
+                            .bodyToMono(String.class)
+                            .block();
+                    log.info("Stock restored for product {} by quantity {}", productId, quantityToRestore);
+                } catch (Exception e) {
+                    log.error("Failed to restore stock for product {}: {}", productId, e.getMessage());
+                    // Don't fail the cart operation if stock restoration fails
+                }
+            }
+            
             log.info("Product {} removed from cart for user {}", productId, userId);
             return "redirect:/cart?success=Product removed from cart";
             
         } catch (Exception e) {
             log.error("Error removing product from cart: {}", e.getMessage(), e);
             return "redirect:/cart?error=Failed to remove product from cart";
+        }
+    }
+
+    @PostMapping("/cart/clear")
+    public String clearCart(@RequestParam(defaultValue = "user123") String userId) {
+        try {
+            // First, get the cart to find quantities of all products being removed
+            String cartResponse = orderClient.get()
+                    .uri("/carts/" + userId)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            
+            Cart cart = parseCartFromApiResponse(cartResponse);
+            
+            // Clear all items from cart
+            orderClient.delete()
+                    .uri("/carts/" + userId)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            
+            // Restore stock for all products that were in the cart
+            if (cart != null && cart.getItems() != null) {
+                for (CartItem item : cart.getItems()) {
+                    try {
+                        productClient.post()
+                                .uri("/products/" + item.getProductId() + "/stock/add?quantity=" + item.getQuantity())
+                                .retrieve()
+                                .bodyToMono(String.class)
+                                .block();
+                        log.info("Stock restored for product {} by quantity {}", item.getProductId(), item.getQuantity());
+                    } catch (Exception e) {
+                        log.error("Failed to restore stock for product {}: {}", item.getProductId(), e.getMessage());
+                        // Don't fail the cart operation if stock restoration fails
+                    }
+                }
+            }
+            
+            log.info("Cart cleared for user {}", userId);
+            return "redirect:/cart?success=All items removed from cart";
+            
+        } catch (Exception e) {
+            log.error("Error clearing cart: {}", e.getMessage(), e);
+            return "redirect:/cart?error=Failed to clear cart";
         }
     }
 
@@ -268,7 +363,20 @@ public class EcommerceController {
 
     @GetMapping("/orders")
     public String orders(@RequestParam(defaultValue = "user123") String userId, Model model) {
-        // Implementation for viewing orders
+        try {
+            // Get orders from order service
+            List<Order> orders = orderClient.get()
+                    .uri("/orders?userId=" + userId)
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<List<Order>>() {})
+                    .block();
+            
+            model.addAttribute("orders", orders != null ? orders : List.of());
+        } catch (Exception e) {
+            log.error("Error loading orders: {}", e.getMessage(), e);
+            model.addAttribute("orders", List.of());
+            model.addAttribute("error", "Failed to load orders: " + e.getMessage());
+        }
         return "orders";
     }
     
