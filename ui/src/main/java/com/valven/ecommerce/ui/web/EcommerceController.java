@@ -216,8 +216,21 @@ public class EcommerceController {
     @PostMapping("/cart/remove")
     public String removeFromCart(@RequestParam Long productId, 
                                 @RequestParam(defaultValue = "user123") String userId) {
-        // Implementation for removing items
-        return "redirect:/cart";
+        try {
+            // Remove item from cart
+            orderClient.delete()
+                    .uri("/carts/" + userId + "/items/" + productId)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            
+            log.info("Product {} removed from cart for user {}", productId, userId);
+            return "redirect:/cart?success=Product removed from cart";
+            
+        } catch (Exception e) {
+            log.error("Error removing product from cart: {}", e.getMessage(), e);
+            return "redirect:/cart?error=Failed to remove product from cart";
+        }
     }
 
     @PostMapping("/order/create")

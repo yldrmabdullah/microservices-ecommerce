@@ -4,10 +4,10 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: user-service
-          uri: http://localhost:8083
+        - id: auth-service
+          uri: http://localhost:8082
           predicates:
-            - Path=/api/auth/**,/api/users/**
+            - Path=/api/auth/**
           filters:
             - name: Retry
               args:
